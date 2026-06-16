@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astaroth_VT — Bot de Discord</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo: #CC0000;
+    --rojo-neon: #FF1111;
+    --rojo-oscuro: #8B0000;
+    --negro: #0A0A0A;
+    --negro-card: #111111;
+    --negro-borde: #1A1A1A;
+    --gris: #888888;
+    --blanco: #F0F0F0;
+    --degradado: linear-gradient(135deg, #CC0000, #FF4444);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--negro);
+    color: var(--blanco);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── PARTÍCULAS DE FONDO ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(204,0,0,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(204,0,0,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    height: 70px;
+    background: rgba(10,10,10,0.95);
+    border-bottom: 1px solid rgba(204,0,0,0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo-icon {
+    width: 40px; height: 40px;
+    background: var(--degradado);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .nav-logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--blanco);
+    letter-spacing: 1px;
+  }
+
+  .nav-logo-text span { color: var(--rojo-neon); }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--gris);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--blanco); }
+
+  .nav-btn {
+    background: var(--degradado);
+    color: white !important;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s !important;
+  }
+
+  .nav-btn:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 20px 80px;
+    z-index: 1;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(204,0,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(204,0,0,0.1);
+    border: 1px solid rgba(204,0,0,0.3);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    color: #FF6666;
+    margin-bottom: 30px;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--rojo-neon);
+    border-radius: 50%;
+    animation: pulso 1.5s infinite;
+  }
+
+  @keyframes pulso {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(52px, 8vw, 100px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 .nombre {
+    display: block;
+    background: var(--degradado);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 18px;
+    color: var(--gris);
+    max-width: 520px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primario {
+    background: var(--degradado);
+    color: white;
+    padding: 14px 32px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(204,0,0,0.3);
+  }
+
+  .btn-primario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(204,0,0,0.5);
+  }
+
+  .btn-secundario {
+    background: transparent;
+    color: var(--blanco);
+    padding: 14px 32px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-secundario:hover {
+    border-color: rgba(204,0,0,0.5);
+    background: rgba(204,0,0,0.05);
+  }
+
+  /* ── STATS ── */
+  .stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 1px solid var(--negro-borde);
+    border-bottom: 1px solid var(--negro-borde);
+  }
+
+  .stat {
+    flex: 1;
+    max-width: 250px;
+    padding: 40px 20px;
+    text-align: center;
+    border-right: 1px solid var(--negro-borde);
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    background: var(--degradado);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--gris);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── SECCIONES ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .seccion-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rojo-neon);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .seccion-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .seccion-desc {
+    color: var(--gris);
+    font-size: 16px;
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 60px;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .feature-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 16px;
+    padding: 32px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(204,0,0,0.4);
+    transform: translateY(-4px);
+  }
+
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: rgba(204,0,0,0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .feature-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .feature-desc {
+    color: var(--gris);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── COMANDOS ── */
+  #comandos { background: rgba(255,255,255,0.01); }
+
+  .comandos-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--negro-borde);
+    background: transparent;
+    color: var(--gris);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .tab.activo, .tab:hover {
+    background: rgba(204,0,0,0.15);
+    border-color: rgba(204,0,0,0.4);
+    color: var(--blanco);
+  }
+
+  .comandos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .comando-item {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .comando-item:hover { border-color: rgba(204,0,0,0.3); }
+
+  .comando-emoji { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+
+  .comando-nombre {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--rojo-neon);
+    margin-bottom: 4px;
+  }
+
+  .comando-desc {
+    font-size: 13px;
+    color: var(--gris);
+    line-height: 1.5;
+  }
+
+  /* ── CTA FINAL ── */
+  .cta-section {
+    text-align: center;
+    padding: 100px 60px;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--negro-borde);
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(204,0,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .cta-section p {
+    color: var(--gris);
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--negro-borde);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blanco);
+  }
+
+  .footer-logo span { color: var(--rojo-neon); }
+
+  .footer-texto {
+    color: var(--gris);
+    font-size: 13px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--gris);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--blanco); }
+
+  /* ── DIVISOR ── */
+  .divisor {
+    height: 1px;
+    background: var(--negro-borde);
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 60px 20px; }
+    .stats { flex-wrap: wrap; }
+    .stat { min-width: 140px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .cta-section { padding: 60px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🔥</div>
+    <span class="nav-logo-text">Astaroth<span>_VT</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#caracteristicas">Características</a></li>
+    <li><a href="#comandos">Comandos</a></li>
+    <li><a href="#invitar" class="nav-btn">Invitar Bot</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div>
+    <div class="hero-badge">Bot oficial de Discord · Online 24/7</div>
+    <h1>
+      El bot que tu<br>
+      <span class="nombre">servidor necesita</span>
+    </h1>
+    <p class="hero-desc">
+      Astaroth_VT es el bot oficial del servidor. Música, moderación, gaming, anuncios y mucho más — todo en uno.
+    </p>
+    <div class="hero-btns">
+      <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-primario">🚀 Añadir al servidor</a>
+      <a href="#comandos" class="btn-secundario">Ver comandos</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Siempre Online</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">12+</div>
+    <div class="stat-label">Comandos</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0ms</div>
+    <div class="stat-label">Configuración</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Gratis</div>
+  </div>
+</div>
+
+<!-- CARACTERÍSTICAS -->
+<section id="caracteristicas">
+  <div class="seccion-label">¿Por qué Astaroth_VT?</div>
+  <h2 class="seccion-titulo">Todo lo que necesitas<br>en un solo bot</h2>
+  <p class="seccion-desc">Diseñado para la comunidad gaming y streaming de Astaroth_VT.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎵</div>
+      <div class="feature-titulo">Música</div>
+      <div class="feature-desc">Reproduce música en canales de voz con comandos simples. Crea colas, salta canciones y controla la reproducción.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔴</div>
+      <div class="feature-titulo">Alertas de Stream</div>
+      <div class="feature-desc">El bot detecta automáticamente cuando empiezas a transmitir y notifica a toda la comunidad al instante.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👋</div>
+      <div class="feature-titulo">Bienvenidas</div>
+      <div class="feature-desc">Mensajes de bienvenida y despedida automáticos con diseño personalizado para cada nuevo miembro.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-titulo">Moderación</div>
+      <div class="feature-desc">Herramientas completas de moderación: ban, kick y limpieza de mensajes con registro detallado.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎮</div>
+      <div class="feature-titulo">Gaming</div>
+      <div class="feature-desc">Anuncia sesiones de juego y busca equipo con comandos especiales para la comunidad gamer.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📢</div>
+      <div class="feature-titulo">Anuncios</div>
+      <div class="feature-desc">Envía anuncios oficiales con diseño profesional directamente desde Discord con un simple comando.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- COMANDOS -->
+<section id="comandos">
+  <div class="seccion-label">Comandos</div>
+  <h2 class="seccion-titulo">Prefijo: <span style="color:var(--rojo-neon)">.</span></h2>
+  <p class="seccion-desc">Todos los comandos disponibles en Astaroth_VT Bot.</p>
+
+  <div class="comandos-tabs">
+    <button class="tab activo" onclick="filtrar('todos', this)">Todos</button>
+    <button class="tab" onclick="filtrar('musica', this)">🎵 Música</button>
+    <button class="tab" onclick="filtrar('mod', this)">🛡️ Moderación</button>
+    <button class="tab" onclick="filtrar('gaming', this)">🎮 Gaming</button>
+    <button class="tab" onclick="filtrar('general', this)">⚙️ General</button>
+  </div>
+
+  <div class="comandos-lista" id="lista-comandos">
+    <div class="comando-item" data-cat="musica">
+      <div class="comando-emoji">🎵</div>
+      <div>
+        <div class="comando-nombre">.play [canción]</div>
+        <div class="comando-desc">Agrega una canción a la cola de reproducción</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="musica">
+      <div class="comando-emoji">⏭️</div>
+      <div>
+        <div class="comando-nombre">.skip</div>
+        <div class="comando-desc">Salta la canción actual y reproduce la siguiente</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="musica">
+      <div class="comando-emoji">⏹️</div>
+      <div>
+        <div class="comando-nombre">.stop</div>
+        <div class="comando-desc">Detiene la música y limpia la cola</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="musica">
+      <div class="comando-emoji">📋</div>
+      <div>
+        <div class="comando-nombre">.cola</div>
+        <div class="comando-desc">Muestra todas las canciones en la cola actual</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="mod">
+      <div class="comando-emoji">🔨</div>
+      <div>
+        <div class="comando-nombre">.ban @usuario [razón]</div>
+        <div class="comando-desc">Banea a un usuario del servidor permanentemente</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="mod">
+      <div class="comando-emoji">👢</div>
+      <div>
+        <div class="comando-nombre">.kick @usuario [razón]</div>
+        <div class="comando-desc">Expulsa a un usuario del servidor</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="mod">
+      <div class="comando-emoji">🗑️</div>
+      <div>
+        <div class="comando-nombre">.limpiar [cantidad]</div>
+        <div class="comando-desc">Elimina una cantidad de mensajes del canal</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="gaming">
+      <div class="comando-emoji">🎮</div>
+      <div>
+        <div class="comando-nombre">.gaming [juego]</div>
+        <div class="comando-desc">Anuncia una sesión de gaming en el servidor</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="gaming">
+      <div class="comando-emoji">👥</div>
+      <div>
+        <div class="comando-nombre">.lfg [mensaje]</div>
+        <div class="comando-desc">Busca equipo para jugar con otros miembros</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="general">
+      <div class="comando-emoji">🏓</div>
+      <div>
+        <div class="comando-nombre">.ping</div>
+        <div class="comando-desc">Muestra la latencia actual del bot</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="general">
+      <div class="comando-emoji">ℹ️</div>
+      <div>
+        <div class="comando-nombre">.info</div>
+        <div class="comando-desc">Muestra información completa del bot</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="general">
+      <div class="comando-emoji">📖</div>
+      <div>
+        <div class="comando-nombre">.ayuda</div>
+        <div class="comando-desc">Lista todos los comandos disponibles</div>
+      </div>
+    </div>
+    <div class="comando-item" data-cat="general">
+      <div class="comando-emoji">📢</div>
+      <div>
+        <div class="comando-nombre">.anuncio [mensaje]</div>
+        <div class="comando-desc">Envía un anuncio oficial (solo administradores)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section" id="invitar">
+  <h2>¿Listo para añadirlo<br>a tu servidor?</h2>
+  <p>Gratis, sin configuración complicada. Un clic y listo.</p>
+  <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-primario">
+    🚀 Añadir Astaroth_VT Bot
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Astaroth<span>_VT</span> Bot</div>
+  <div class="footer-texto">© 2026 Astaroth_VT · Todos los derechos reservados</div>
+  <ul class="footer-links">
+    <li><a href="#caracteristicas">Características</a></li>
+    <li><a href="#comandos">Comandos</a></li>
+    <li><a href="https://discord.gg/tu-servidor" target="_blank">Discord</a></li>
+  </ul>
+</footer>
+
+<script>
+  function filtrar(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+    btn.classList.add('activo');
+    document.querySelectorAll('.comando-item').forEach(item => {
+      if (cat === 'todos' || item.dataset.cat === cat) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Animación suave al hacer scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .comando-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
