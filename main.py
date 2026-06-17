@@ -2,18 +2,40 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
+import json
 from datetime import datetime
 
 TOKEN = os.getenv("TOKEN")
 
-# ── IDs DE CANALES ──
-CANAL_BIENVENIDA = 1516545132466405477
-CANAL_DESPEDIDA  = 1516545132466405477
-CANAL_ANUNCIOS   = 1516545182659641365
-CANAL_STREAM     = 1516545557856780308
-
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=".", intents=intents, help_command=None)
+
+# ════════════════════════════════
+#        BASE DE DATOS JSON
+# ════════════════════════════════
+
+CONFIG_FILE = "config.json"
+
+def cargar_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def guardar_config(config):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(config, f, indent=4)
+
+def get_canal(guild_id, tipo):
+    config = cargar_config()
+    return config.get(str(guild_id), {}).get(tipo)
+
+def set_canal(guild_id, tipo, canal_id):
+    config = cargar_config()
+    if str(guild_id) not in config:
+        config[str(guild_id)] = {}
+    config[str(guild_id)][tipo] = canal_id
+    guardar_config(config)
 
 # ════════════════════════════════
 #        EVENTOS
@@ -36,7 +58,12 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    canal = bot.get_channel(CANAL_BIENVENIDA)
+    canal_id = get_canal(member.guild.id, "bienvenida")
+    if not canal_id:
+        return
+    canal = bot.get_channel(canal_id)
+    if not canal:
+        return
     embed = discord.Embed(
         title="",
         description=(
@@ -44,7 +71,7 @@ async def on_member_join(member):
             f"  ¡BIENVENIDO AL SERVIDOR!\n"
             f"```\n"
             f"**¡Hola {member.mention}!** 👋\n\n"
-            f"Nos alegra tenerte en **Astaroth_VT** 🔥\n"
+            f"Nos alegra tenerte en **{member.guild.name}** 🔥\n"
             f"Eres el miembro número **{member.guild.member_count}** 🎉\n\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
             f"📌 Lee las reglas del servidor\n"
@@ -61,14 +88,19 @@ async def on_member_join(member):
     )
     embed.set_thumbnail(url=member.display_avatar.url)
     embed.set_footer(
-        text=f"Astaroth_VT Community • {member.guild.member_count} miembros",
+        text=f"{member.guild.name} • {member.guild.member_count} miembros",
         icon_url=bot.user.display_avatar.url
     )
     await canal.send(embed=embed)
 
 @bot.event
 async def on_member_remove(member):
-    canal = bot.get_channel(CANAL_DESPEDIDA)
+    canal_id = get_canal(member.guild.id, "despedida")
+    if not canal_id:
+        return
+    canal = bot.get_channel(canal_id)
+    if not canal:
+        return
     embed = discord.Embed(
         description=(
             f"**{member.name}** ha abandonado el servidor 😢\n\n"
@@ -85,7 +117,7 @@ async def on_member_remove(member):
     )
     embed.set_thumbnail(url=member.display_avatar.url)
     embed.set_footer(
-        text="Astaroth_VT Community",
+        text=f"{member.guild.name}",
         icon_url=bot.user.display_avatar.url
     )
     await canal.send(embed=embed)
@@ -93,13 +125,18 @@ async def on_member_remove(member):
 @bot.event
 async def on_member_update(before, after):
     if before.premium_since is None and after.premium_since is not None:
-        canal = bot.get_channel(CANAL_ANUNCIOS)
+        canal_id = get_canal(after.guild.id, "anuncios")
+        if not canal_id:
+            return
+        canal = bot.get_channel(canal_id)
+        if not canal:
+            return
         embed = discord.Embed(
             title="💎 ¡NUEVO SERVER BOOST!",
             description=(
                 f"¡{after.mention} acaba de **boostear** el servidor! 🚀\n\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"💜 ¡Gracias por apoyar a **Astaroth_VT**!\n"
+                f"💜 ¡Gracias por apoyar a **{after.guild.name}**!\n"
                 f"🌟 Disfruta tus beneficios exclusivos\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━"
             ),
@@ -108,7 +145,7 @@ async def on_member_update(before, after):
         )
         embed.set_thumbnail(url=after.display_avatar.url)
         embed.set_footer(
-            text="Astaroth_VT Community",
+            text=after.guild.name,
             icon_url=bot.user.display_avatar.url
         )
         await canal.send(embed=embed)
@@ -119,9 +156,14 @@ async def on_presence_update(before, after):
         if isinstance(activity, discord.Streaming):
             already = any(isinstance(a, discord.Streaming) for a in before.activities)
             if not already:
-                canal = bot.get_channel(CANAL_STREAM)
+                canal_id = get_canal(after.guild.id, "stream")
+                if not canal_id:
+                    return
+                canal = bot.get_channel(canal_id)
+                if not canal:
+                    return
                 embed = discord.Embed(
-                    title="🔴 ¡ASTAROTH_VT ESTÁ EN DIRECTO!",
+                    title="🔴 ¡ESTAMOS EN DIRECTO!",
                     description=(
                         f"**{after.mention}** está transmitiendo ahora mismo 🎥\n\n"
                         f"━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -135,10 +177,83 @@ async def on_presence_update(before, after):
                 embed.add_field(name="📺 Título", value=f"```{activity.name}```", inline=True)
                 embed.set_thumbnail(url=after.display_avatar.url)
                 embed.set_footer(
-                    text="¡No te lo pierdas! • Astaroth_VT",
+                    text=f"¡No te lo pierdas! • {after.guild.name}",
                     icon_url=bot.user.display_avatar.url
                 )
                 await canal.send("@everyone", embed=embed)
+
+# ════════════════════════════════
+#        CONFIGURACIÓN
+# ════════════════════════════════
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setbienvenida(ctx, canal: discord.TextChannel):
+    set_canal(ctx.guild.id, "bienvenida", canal.id)
+    embed = discord.Embed(
+        title="✅ Canal configurado",
+        description=f"Canal de bienvenida establecido en {canal.mention}",
+        color=0x00FF88
+    )
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setdespedida(ctx, canal: discord.TextChannel):
+    set_canal(ctx.guild.id, "despedida", canal.id)
+    embed = discord.Embed(
+        title="✅ Canal configurado",
+        description=f"Canal de despedida establecido en {canal.mention}",
+        color=0x00FF88
+    )
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setanuncios(ctx, canal: discord.TextChannel):
+    set_canal(ctx.guild.id, "anuncios", canal.id)
+    embed = discord.Embed(
+        title="✅ Canal configurado",
+        description=f"Canal de anuncios establecido en {canal.mention}",
+        color=0x00FF88
+    )
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setstream(ctx, canal: discord.TextChannel):
+    set_canal(ctx.guild.id, "stream", canal.id)
+    embed = discord.Embed(
+        title="✅ Canal configurado",
+        description=f"Canal de stream establecido en {canal.mention}",
+        color=0x00FF88
+    )
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def config(ctx):
+    config = cargar_config()
+    servidor = config.get(str(ctx.guild.id), {})
+    bienvenida = f"<#{servidor['bienvenida']}>" if "bienvenida" in servidor else "❌ No configurado"
+    despedida = f"<#{servidor['despedida']}>" if "despedida" in servidor else "❌ No configurado"
+    anuncios = f"<#{servidor['anuncios']}>" if "anuncios" in servidor else "❌ No configurado"
+    stream = f"<#{servidor['stream']}>" if "stream" in servidor else "❌ No configurado"
+    embed = discord.Embed(
+        title="⚙️ CONFIGURACIÓN DEL SERVIDOR",
+        description=f"**{ctx.guild.name}**\n━━━━━━━━━━━━━━━━━━━━━━",
+        color=0xFF0000,
+        timestamp=datetime.utcnow()
+    )
+    embed.add_field(name="👋 Bienvenida", value=bienvenida, inline=True)
+    embed.add_field(name="😢 Despedida", value=despedida, inline=True)
+    embed.add_field(name="📢 Anuncios", value=anuncios, inline=True)
+    embed.add_field(name="🔴 Stream", value=stream, inline=True)
+    embed.set_footer(
+        text=f"Pedido por {ctx.author.name}",
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 
 # ════════════════════════════════
 #        COMANDOS GENERALES
@@ -180,7 +295,7 @@ async def info(ctx):
     embed.set_thumbnail(url=bot.user.display_avatar.url)
     embed.add_field(
         name="⚙️ Información",
-        value=f"```Prefijo  : .\nMiembros : {ctx.guild.member_count}\nVersión  : 1.0.0```",
+        value=f"```Prefijo  : .\nMiembros : {ctx.guild.member_count}\nServidores: {len(bot.guilds)}\nVersión  : 1.1.0```",
         inline=False
     )
     embed.add_field(
@@ -203,6 +318,11 @@ async def info(ctx):
         value="```.ban   @user [razón] → Banear\n.kick  @user [razón] → Expulsar\n.limpiar [cantidad]  → Limpiar chat```",
         inline=False
     )
+    embed.add_field(
+        name="⚙️ Configuración",
+        value="```.setbienvenida #canal\n.setdespedida  #canal\n.setanuncios   #canal\n.setstream     #canal\n.config        → Ver config```",
+        inline=False
+    )
     embed.set_footer(
         text=f"Pedido por {ctx.author.name} • Astaroth_VT Community",
         icon_url=ctx.author.display_avatar.url
@@ -216,18 +336,21 @@ async def ayuda(ctx):
         description="━━━━━━━━━━━━━━━━━━━━━━\nUsa `.info` para más detalles\n━━━━━━━━━━━━━━━━━━━━━━",
         color=0xFF0000
     )
-    embed.add_field(name="🏓 .ping", value="Ver latencia del bot", inline=True)
-    embed.add_field(name="ℹ️ .info", value="Info completa del bot", inline=True)
+    embed.add_field(name="🏓 .ping", value="Ver latencia", inline=True)
+    embed.add_field(name="ℹ️ .info", value="Info del bot", inline=True)
     embed.add_field(name="🎵 .play", value="Reproducir música", inline=True)
     embed.add_field(name="⏭️ .skip", value="Saltar canción", inline=True)
     embed.add_field(name="⏹️ .stop", value="Parar música", inline=True)
     embed.add_field(name="📋 .cola", value="Ver cola", inline=True)
-    embed.add_field(name="🎮 .gaming", value="Anuncio de juego", inline=True)
+    embed.add_field(name="🎮 .gaming", value="Anuncio gaming", inline=True)
     embed.add_field(name="👥 .lfg", value="Buscar equipo", inline=True)
     embed.add_field(name="📢 .anuncio", value="Enviar anuncio", inline=True)
     embed.add_field(name="🔨 .ban", value="Banear usuario", inline=True)
     embed.add_field(name="👢 .kick", value="Expulsar usuario", inline=True)
     embed.add_field(name="🗑️ .limpiar", value="Limpiar mensajes", inline=True)
+    embed.add_field(name="⚙️ .config", value="Ver configuración", inline=True)
+    embed.add_field(name="📌 .setbienvenida", value="Configurar canal", inline=True)
+    embed.add_field(name="📌 .setanuncios", value="Configurar canal", inline=True)
     embed.set_footer(
         text="Astaroth_VT Community • 2026",
         icon_url=bot.user.display_avatar.url
@@ -241,7 +364,11 @@ async def ayuda(ctx):
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def anuncio(ctx, *, mensaje):
-    canal = bot.get_channel(CANAL_ANUNCIOS)
+    canal_id = get_canal(ctx.guild.id, "anuncios")
+    if canal_id:
+        canal = bot.get_channel(canal_id)
+    else:
+        canal = ctx.channel
     embed = discord.Embed(
         title="📢 ANUNCIO OFICIAL",
         description=(
@@ -257,7 +384,7 @@ async def anuncio(ctx, *, mensaje):
         icon_url=ctx.author.display_avatar.url
     )
     embed.set_footer(
-        text="Astaroth_VT Community",
+        text=ctx.guild.name,
         icon_url=bot.user.display_avatar.url
     )
     await canal.send("@everyone", embed=embed)
@@ -324,7 +451,7 @@ async def limpiar(ctx, cantidad: int = 5):
 #        MÚSICA
 # ════════════════════════════════
 
-queue = []
+queue = {}
 
 @bot.command()
 async def play(ctx, *, busqueda):
@@ -335,14 +462,17 @@ async def play(ctx, *, busqueda):
             color=0xFF0000
         )
         return await ctx.send(embed=embed)
-    queue.append(busqueda)
+    gid = ctx.guild.id
+    if gid not in queue:
+        queue[gid] = []
+    queue[gid].append(busqueda)
     embed = discord.Embed(
         title="🎵 AGREGADO A LA COLA",
         description=(
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
             f"🎶 **{busqueda}**\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"📋 Posición en cola: **#{len(queue)}**"
+            f"📋 Posición en cola: **#{len(queue[gid])}**"
         ),
         color=0xFF0000,
         timestamp=datetime.utcnow()
@@ -355,8 +485,9 @@ async def play(ctx, *, busqueda):
 
 @bot.command()
 async def skip(ctx):
-    if queue:
-        cancion = queue.pop(0)
+    gid = ctx.guild.id
+    if gid in queue and queue[gid]:
+        cancion = queue[gid].pop(0)
         embed = discord.Embed(
             title="⏭️ CANCIÓN SALTADA",
             description=f"Se saltó: **{cancion}**",
@@ -368,28 +499,31 @@ async def skip(ctx):
 
 @bot.command(name="cola")
 async def ver_cola(ctx):
-    if not queue:
+    gid = ctx.guild.id
+    if gid not in queue or not queue[gid]:
         embed = discord.Embed(
             title="📭 Cola Vacía",
             description="No hay canciones en la cola.\nUsa `.play [canción]` para agregar una.",
             color=0xFF0000
         )
         return await ctx.send(embed=embed)
-    lista = "\n".join([f"`{i+1}.` 🎵 {s}" for i, s in enumerate(queue)])
+    lista = "\n".join([f"`{i+1}.` 🎵 {s}" for i, s in enumerate(queue[gid])])
     embed = discord.Embed(
         title="🎵 COLA DE MÚSICA",
         description=f"━━━━━━━━━━━━━━━━━━━━━━\n{lista}\n━━━━━━━━━━━━━━━━━━━━━━",
         color=0xFF0000
     )
     embed.set_footer(
-        text=f"{len(queue)} canción(es) en cola",
+        text=f"{len(queue[gid])} canción(es) en cola",
         icon_url=bot.user.display_avatar.url
     )
     await ctx.send(embed=embed)
 
 @bot.command()
 async def stop(ctx):
-    queue.clear()
+    gid = ctx.guild.id
+    if gid in queue:
+        queue[gid].clear()
     embed = discord.Embed(
         title="⏹️ MÚSICA DETENIDA",
         description="La cola fue limpiada exitosamente.",
