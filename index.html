@@ -4,22 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Astaroth_VT — Bot de Discord</title>
+<meta name="description" content="Astaroth_VT es el bot oficial del servidor. Música, moderación, gaming, anuncios y mucho más.">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --rojo: #CC0000;
-    --rojo-neon: #FF1111;
-    --rojo-oscuro: #8B0000;
-    --negro: #0A0A0A;
-    --negro-card: #111111;
-    --negro-borde: #1A1A1A;
-    --gris: #888888;
+    --rojo-neon: #FF2222;
+    --negro: #080808;
+    --negro-card: #101010;
+    --negro-borde: #1C1C1C;
+    --gris: #777777;
+    --gris-claro: #AAAAAA;
     --blanco: #F0F0F0;
     --degradado: linear-gradient(135deg, #CC0000, #FF4444);
+    --degradado-dark: linear-gradient(135deg, #8B0000, #CC0000);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -29,19 +30,44 @@
     overflow-x: hidden;
   }
 
-  /* ── PARTÍCULAS DE FONDO ── */
-  body::before {
-    content: '';
+  /* FONDO ANIMADO */
+  .bg-animado {
     position: fixed;
     inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 20%, rgba(204,0,0,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(204,0,0,0.05) 0%, transparent 50%);
-    pointer-events: none;
     z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
   }
 
-  /* ── NAVBAR ── */
+  .bg-animado::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(204,0,0,0.06) 0%, transparent 70%);
+    top: -200px; left: -200px;
+    animation: flotar1 8s ease-in-out infinite;
+  }
+
+  .bg-animado::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(204,0,0,0.04) 0%, transparent 70%);
+    bottom: -150px; right: -150px;
+    animation: flotar2 10s ease-in-out infinite;
+  }
+
+  @keyframes flotar1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(100px, 80px); }
+  }
+
+  @keyframes flotar2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-80px, -60px); }
+  }
+
+  /* NAVBAR */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -50,10 +76,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 60px;
-    height: 70px;
-    background: rgba(10,10,10,0.95);
-    border-bottom: 1px solid rgba(204,0,0,0.2);
-    backdrop-filter: blur(10px);
+    height: 68px;
+    background: rgba(8,8,8,0.97);
+    border-bottom: 1px solid rgba(204,0,0,0.12);
+    backdrop-filter: blur(12px);
   }
 
   .nav-logo {
@@ -64,11 +90,12 @@
   }
 
   .nav-logo-icon {
-    width: 40px; height: 40px;
+    width: 38px; height: 38px;
     background: var(--degradado);
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
+    box-shadow: 0 0 15px rgba(204,0,0,0.3);
   }
 
   .nav-logo-text {
@@ -83,33 +110,36 @@
 
   .nav-links {
     display: flex;
-    gap: 40px;
+    align-items: center;
+    gap: 32px;
     list-style: none;
   }
 
   .nav-links a {
     color: var(--gris);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     transition: color 0.2s;
   }
 
   .nav-links a:hover { color: var(--blanco); }
 
   .nav-btn {
-    background: var(--degradado);
+    background: var(--degradado) !important;
     color: white !important;
     padding: 8px 20px;
     border-radius: 8px;
     font-weight: 600 !important;
-    transition: opacity 0.2s !important;
+    font-size: 13px !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+    box-shadow: 0 2px 12px rgba(204,0,0,0.25);
   }
 
-  .nav-btn:hover { opacity: 0.85; }
+  .nav-btn:hover { opacity: 0.85 !important; transform: translateY(-1px); }
 
-  /* ── HERO ── */
+  /* HERO */
   .hero {
     position: relative;
     min-height: 100vh;
@@ -117,7 +147,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 120px 20px 80px;
+    padding: 130px 20px 100px;
     z-index: 1;
   }
 
@@ -125,128 +155,154 @@
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(204,0,0,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(204,0,0,0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      linear-gradient(rgba(204,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
   }
 
   .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(204,0,0,0.1);
-    border: 1px solid rgba(204,0,0,0.3);
-    padding: 6px 16px;
+    background: rgba(204,0,0,0.08);
+    border: 1px solid rgba(204,0,0,0.25);
+    padding: 6px 18px;
     border-radius: 100px;
-    font-size: 13px;
-    color: #FF6666;
-    margin-bottom: 30px;
+    font-size: 12px;
+    color: #FF8888;
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
   }
 
-  .hero-badge::before {
-    content: '';
+  .hero-badge-dot {
     width: 6px; height: 6px;
     background: var(--rojo-neon);
     border-radius: 50%;
     animation: pulso 1.5s infinite;
+    box-shadow: 0 0 6px var(--rojo-neon);
   }
 
   @keyframes pulso {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 0.3; transform: scale(0.7); }
   }
 
   .hero h1 {
     font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(52px, 8vw, 100px);
+    font-size: clamp(56px, 9vw, 110px);
     font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -2px;
-    margin-bottom: 24px;
+    line-height: 0.92;
+    letter-spacing: -3px;
+    margin-bottom: 28px;
   }
 
-  .hero h1 .nombre {
+  .hero h1 .linea1 { display: block; color: var(--blanco); }
+
+  .hero h1 .linea2 {
     display: block;
     background: var(--degradado);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(204,0,0,0.3));
   }
 
   .hero-desc {
-    font-size: 18px;
-    color: var(--gris);
-    max-width: 520px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
+    font-size: 17px;
+    color: var(--gris-claro);
+    max-width: 480px;
+    margin: 0 auto 52px;
+    line-height: 1.75;
+    font-weight: 300;
   }
 
   .hero-btns {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     justify-content: center;
     flex-wrap: wrap;
   }
 
-  .btn-primario {
+  .btn-rojo {
     background: var(--degradado);
     color: white;
-    padding: 14px 32px;
+    padding: 13px 28px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(204,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(204,0,0,0.35);
+    display: inline-flex; align-items: center; gap: 8px;
   }
 
-  .btn-primario:hover {
+  .btn-rojo:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(204,0,0,0.5);
+    box-shadow: 0 8px 32px rgba(204,0,0,0.5);
   }
 
-  .btn-secundario {
+  .btn-discord {
+    background: #5865F2;
+    color: white;
+    padding: 13px 28px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: transform 0.2s, opacity 0.2s;
+    box-shadow: 0 4px 20px rgba(88,101,242,0.3);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+
+  .btn-discord:hover { transform: translateY(-2px); opacity: 0.9; }
+
+  .btn-outline {
     background: transparent;
     color: var(--blanco);
-    padding: 14px 32px;
+    padding: 13px 28px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 15px;
-    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
     transition: border-color 0.2s, background 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
   }
 
-  .btn-secundario:hover {
-    border-color: rgba(204,0,0,0.5);
+  .btn-outline:hover {
+    border-color: rgba(204,0,0,0.4);
     background: rgba(204,0,0,0.05);
   }
 
-  /* ── STATS ── */
-  .stats {
+  /* STATS */
+  .stats-wrap {
     position: relative;
     z-index: 1;
-    display: flex;
-    justify-content: center;
-    gap: 0;
     border-top: 1px solid var(--negro-borde);
     border-bottom: 1px solid var(--negro-borde);
   }
 
+  .stats {
+    display: flex;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
   .stat {
     flex: 1;
-    max-width: 250px;
-    padding: 40px 20px;
+    padding: 44px 20px;
     text-align: center;
     border-right: 1px solid var(--negro-borde);
+    position: relative;
   }
 
   .stat:last-child { border-right: none; }
 
   .stat-num {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 700;
     background: var(--degradado);
     -webkit-background-clip: text;
@@ -257,243 +313,378 @@
   }
 
   .stat-label {
-    font-size: 13px;
+    font-size: 11px;
     color: var(--gris);
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     text-transform: uppercase;
+    font-weight: 500;
   }
 
-  /* ── SECCIONES ── */
-  section {
+  /* SECCIONES */
+  .seccion {
     position: relative;
     z-index: 1;
-    padding: 100px 60px;
+    padding: 110px 60px;
     max-width: 1200px;
     margin: 0 auto;
   }
 
-  .seccion-label {
-    font-size: 12px;
+  .seccion-etiqueta {
+    font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--rojo-neon);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     font-weight: 600;
   }
 
   .seccion-titulo {
     font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(36px, 5vw, 56px);
+    font-size: clamp(38px, 5vw, 58px);
     font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 16px;
+    line-height: 1.05;
+    margin-bottom: 14px;
   }
 
   .seccion-desc {
-    color: var(--gris);
-    font-size: 16px;
-    max-width: 500px;
-    line-height: 1.7;
-    margin-bottom: 60px;
+    color: var(--gris-claro);
+    font-size: 15px;
+    max-width: 480px;
+    line-height: 1.75;
+    margin-bottom: 56px;
+    font-weight: 300;
   }
 
-  /* ── FEATURES ── */
+  .divisor { height: 1px; background: var(--negro-borde); position: relative; z-index: 1; }
+
+  /* FEATURES */
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 16px;
   }
 
   .feature-card {
     background: var(--negro-card);
     border: 1px solid var(--negro-borde);
     border-radius: 16px;
-    padding: 32px;
-    transition: border-color 0.3s, transform 0.3s;
+    padding: 28px;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--degradado);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
   .feature-card:hover {
-    border-color: rgba(204,0,0,0.4);
-    transform: translateY(-4px);
+    border-color: rgba(204,0,0,0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
   }
 
+  .feature-card:hover::before { opacity: 1; }
+
   .feature-icon {
-    width: 48px; height: 48px;
-    background: rgba(204,0,0,0.1);
+    width: 46px; height: 46px;
+    background: rgba(204,0,0,0.08);
+    border: 1px solid rgba(204,0,0,0.15);
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    margin-bottom: 20px;
+    font-size: 20px;
+    margin-bottom: 18px;
   }
 
   .feature-titulo {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .feature-desc {
     color: var(--gris);
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.7;
   }
 
-  /* ── COMANDOS ── */
-  #comandos { background: rgba(255,255,255,0.01); }
-
-  .comandos-tabs {
+  /* COMANDOS */
+  .tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     flex-wrap: wrap;
   }
 
   .tab {
-    padding: 8px 20px;
+    padding: 7px 18px;
     border-radius: 8px;
     border: 1px solid var(--negro-borde);
     background: transparent;
     color: var(--gris);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
   }
 
   .tab.activo, .tab:hover {
-    background: rgba(204,0,0,0.15);
-    border-color: rgba(204,0,0,0.4);
+    background: rgba(204,0,0,0.12);
+    border-color: rgba(204,0,0,0.35);
     color: var(--blanco);
   }
 
-  .comandos-lista {
+  .comandos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 10px;
   }
 
-  .comando-item {
+  .cmd {
     background: var(--negro-card);
     border: 1px solid var(--negro-borde);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 14px 18px;
     display: flex;
     align-items: flex-start;
+    gap: 14px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .cmd:hover {
+    border-color: rgba(204,0,0,0.25);
+    transform: translateX(3px);
+  }
+
+  .cmd-emoji { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .cmd-nombre {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--rojo-neon);
+    margin-bottom: 3px;
+  }
+
+  .cmd-desc { font-size: 12px; color: var(--gris); line-height: 1.5; }
+
+  .cmd-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-admin { background: rgba(255,100,0,0.15); color: #FF8844; border: 1px solid rgba(255,100,0,0.2); }
+  .badge-todos { background: rgba(0,200,100,0.1); color: #44FF88; border: 1px solid rgba(0,200,100,0.2); }
+  .badge-mod { background: rgba(88,101,242,0.15); color: #8899FF; border: 1px solid rgba(88,101,242,0.2); }
+
+  /* NOVEDADES */
+  .novedades-lista {
+    display: flex;
+    flex-direction: column;
     gap: 16px;
+  }
+
+  .novedad {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
     transition: border-color 0.2s;
   }
 
-  .comando-item:hover { border-color: rgba(204,0,0,0.3); }
+  .novedad:hover { border-color: rgba(204,0,0,0.3); }
 
-  .comando-emoji { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .novedad-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(204,0,0,0.08);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
 
-  .comando-nombre {
+  .novedad-titulo {
     font-family: 'Rajdhani', sans-serif;
     font-size: 17px;
     font-weight: 700;
-    color: var(--rojo-neon);
     margin-bottom: 4px;
   }
 
-  .comando-desc {
-    font-size: 13px;
+  .novedad-desc { font-size: 13px; color: var(--gris); }
+
+  .novedad-fecha {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 11px;
     color: var(--gris);
-    line-height: 1.5;
+    background: var(--negro-borde);
+    padding: 4px 10px;
+    border-radius: 6px;
   }
 
-  /* ── CTA FINAL ── */
-  .cta-section {
+  /* SOPORTE */
+  .soporte-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .soporte-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 16px;
+    padding: 32px 28px;
     text-align: center;
-    padding: 100px 60px;
+    transition: border-color 0.3s, transform 0.3s;
+    text-decoration: none;
+    color: var(--blanco);
+    display: block;
+  }
+
+  .soporte-card:hover {
+    border-color: rgba(204,0,0,0.35);
+    transform: translateY(-4px);
+  }
+
+  .soporte-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+
+  .soporte-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .soporte-desc { color: var(--gris); font-size: 13px; line-height: 1.7; margin-bottom: 20px; }
+
+  .soporte-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 110px 60px;
     position: relative;
     z-index: 1;
     border-top: 1px solid var(--negro-borde);
+    overflow: hidden;
   }
 
-  .cta-section::before {
+  .cta::before {
     content: '';
     position: absolute;
-    top: 0; left: 50%;
+    top: -100px; left: 50%;
     transform: translateX(-50%);
-    width: 600px; height: 300px;
-    background: radial-gradient(ellipse, rgba(204,0,0,0.12) 0%, transparent 70%);
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, rgba(204,0,0,0.08) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  .cta-section h2 {
+  .cta h2 {
     font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(36px, 5vw, 60px);
+    font-size: clamp(40px, 6vw, 68px);
     font-weight: 700;
     margin-bottom: 16px;
+    position: relative;
   }
 
-  .cta-section p {
-    color: var(--gris);
+  .cta p {
+    color: var(--gris-claro);
     font-size: 16px;
-    margin-bottom: 40px;
+    margin-bottom: 44px;
+    position: relative;
   }
 
-  /* ── FOOTER ── */
+  .cta-btns {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  /* FOOTER */
   footer {
     position: relative;
     z-index: 1;
     border-top: 1px solid var(--negro-borde);
-    padding: 40px 60px;
+    padding: 36px 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .footer-logo {
     font-family: 'Rajdhani', sans-serif;
     font-size: 18px;
     font-weight: 700;
-    color: var(--blanco);
   }
 
   .footer-logo span { color: var(--rojo-neon); }
-
-  .footer-texto {
-    color: var(--gris);
-    font-size: 13px;
-  }
+  .footer-texto { color: var(--gris); font-size: 12px; }
 
   .footer-links {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     list-style: none;
   }
 
   .footer-links a {
     color: var(--gris);
     text-decoration: none;
-    font-size: 13px;
+    font-size: 12px;
     transition: color 0.2s;
   }
 
   .footer-links a:hover { color: var(--blanco); }
 
-  /* ── DIVISOR ── */
-  .divisor {
-    height: 1px;
-    background: var(--negro-borde);
-    position: relative;
-    z-index: 1;
+  /* ANIMACIONES */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
+
+  .fadeup.visible { opacity: 1; transform: translateY(0); }
 
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
     .nav-links { display: none; }
-    section { padding: 60px 20px; }
+    .seccion { padding: 60px 20px; }
     .stats { flex-wrap: wrap; }
-    .stat { min-width: 140px; }
-    footer { flex-direction: column; gap: 20px; text-align: center; }
-    .cta-section { padding: 60px 20px; }
+    .stat { min-width: 130px; padding: 30px 15px; }
+    footer { flex-direction: column; text-align: center; }
+    .cta { padding: 60px 20px; }
+    .novedad { flex-direction: column; text-align: center; }
+    .novedad-fecha { margin: 0 auto; }
   }
 </style>
 </head>
 <body>
+
+<div class="bg-animado"></div>
 
 <!-- NAVBAR -->
 <nav>
@@ -504,7 +695,10 @@
   <ul class="nav-links">
     <li><a href="#caracteristicas">Características</a></li>
     <li><a href="#comandos">Comandos</a></li>
-    <li><a href="#invitar" class="nav-btn">Invitar Bot</a></li>
+    <li><a href="#novedades">Novedades</a></li>
+    <li><a href="#soporte">Soporte</a></li>
+    <li><a href="https://discord.gg/Yk6BkHY73h" target="_blank">Servidor</a></li>
+    <li><a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="nav-btn">+ Invitar Bot</a></li>
   </ul>
 </nav>
 
@@ -512,77 +706,83 @@
 <div class="hero">
   <div class="hero-grid"></div>
   <div>
-    <div class="hero-badge">Bot oficial de Discord · Online 24/7</div>
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Bot oficial · Online 24/7 · Versión 1.0
+    </div>
     <h1>
-      El bot que tu<br>
-      <span class="nombre">servidor necesita</span>
+      <span class="linea1">El bot que tu</span>
+      <span class="linea2">servidor necesita</span>
     </h1>
     <p class="hero-desc">
-      Astaroth_VT es el bot oficial del servidor. Música, moderación, gaming, anuncios y mucho más — todo en uno.
+      Astaroth_VT — música, moderación, gaming, alertas de stream y mucho más. Todo gratis, sin configuración complicada.
     </p>
     <div class="hero-btns">
-      <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-primario">🚀 Añadir al servidor</a>
-      <a href="#comandos" class="btn-secundario">Ver comandos</a>
+      <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-rojo">🚀 Añadir al servidor</a>
+      <a href="https://discord.gg/Yk6BkHY73h" target="_blank" class="btn-discord">💬 Unirse al Discord</a>
+      <a href="#comandos" class="btn-outline">Ver comandos</a>
     </div>
   </div>
 </div>
 
 <!-- STATS -->
-<div class="stats">
-  <div class="stat">
-    <div class="stat-num">24/7</div>
-    <div class="stat-label">Siempre Online</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">12+</div>
-    <div class="stat-label">Comandos</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">0ms</div>
-    <div class="stat-label">Configuración</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">100%</div>
-    <div class="stat-label">Gratis</div>
+<div class="stats-wrap">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Siempre Online</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">13+</div>
+      <div class="stat-label">Comandos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Gratis</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Servidor activo</div>
+    </div>
   </div>
 </div>
 
 <!-- CARACTERÍSTICAS -->
-<section id="caracteristicas">
-  <div class="seccion-label">¿Por qué Astaroth_VT?</div>
+<section class="seccion" id="caracteristicas">
+  <div class="seccion-etiqueta">¿Por qué Astaroth_VT?</div>
   <h2 class="seccion-titulo">Todo lo que necesitas<br>en un solo bot</h2>
-  <p class="seccion-desc">Diseñado para la comunidad gaming y streaming de Astaroth_VT.</p>
+  <p class="seccion-desc">Diseñado específicamente para la comunidad gaming y streaming de Astaroth_VT.</p>
 
   <div class="features-grid">
-    <div class="feature-card">
+    <div class="feature-card fadeup">
       <div class="feature-icon">🎵</div>
       <div class="feature-titulo">Música</div>
-      <div class="feature-desc">Reproduce música en canales de voz con comandos simples. Crea colas, salta canciones y controla la reproducción.</div>
+      <div class="feature-desc">Reproduce música en canales de voz. Gestiona colas, salta canciones y controla la reproducción con comandos simples.</div>
     </div>
-    <div class="feature-card">
+    <div class="feature-card fadeup">
       <div class="feature-icon">🔴</div>
       <div class="feature-titulo">Alertas de Stream</div>
-      <div class="feature-desc">El bot detecta automáticamente cuando empiezas a transmitir y notifica a toda la comunidad al instante.</div>
+      <div class="feature-desc">Detección automática cuando empiezas a transmitir en Twitch o YouTube. Notifica a toda la comunidad con @everyone.</div>
     </div>
-    <div class="feature-card">
+    <div class="feature-card fadeup">
       <div class="feature-icon">👋</div>
-      <div class="feature-titulo">Bienvenidas</div>
-      <div class="feature-desc">Mensajes de bienvenida y despedida automáticos con diseño personalizado para cada nuevo miembro.</div>
+      <div class="feature-titulo">Bienvenidas y Despedidas</div>
+      <div class="feature-desc">Mensajes automáticos con embed personalizado para cada nuevo miembro que entra o sale del servidor.</div>
     </div>
-    <div class="feature-card">
+    <div class="feature-card fadeup">
       <div class="feature-icon">🛡️</div>
-      <div class="feature-titulo">Moderación</div>
-      <div class="feature-desc">Herramientas completas de moderación: ban, kick y limpieza de mensajes con registro detallado.</div>
+      <div class="feature-titulo">Moderación Completa</div>
+      <div class="feature-desc">Ban, kick y limpieza de mensajes con embeds detallados que muestran usuario, razón y moderador responsable.</div>
     </div>
-    <div class="feature-card">
+    <div class="feature-card fadeup">
       <div class="feature-icon">🎮</div>
       <div class="feature-titulo">Gaming</div>
-      <div class="feature-desc">Anuncia sesiones de juego y busca equipo con comandos especiales para la comunidad gamer.</div>
+      <div class="feature-desc">Anuncia sesiones de juego y busca equipo con comandos especiales diseñados para la comunidad gamer.</div>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📢</div>
-      <div class="feature-titulo">Anuncios</div>
-      <div class="feature-desc">Envía anuncios oficiales con diseño profesional directamente desde Discord con un simple comando.</div>
+    <div class="feature-card fadeup">
+      <div class="feature-icon">💎</div>
+      <div class="feature-titulo">Avisos de Boost</div>
+      <div class="feature-desc">Celebra automáticamente cada nuevo boost del servidor con un mensaje especial de agradecimiento al canal de avisos.</div>
     </div>
   </div>
 </section>
@@ -590,121 +790,218 @@
 <div class="divisor"></div>
 
 <!-- COMANDOS -->
-<section id="comandos">
-  <div class="seccion-label">Comandos</div>
-  <h2 class="seccion-titulo">Prefijo: <span style="color:var(--rojo-neon)">.</span></h2>
-  <p class="seccion-desc">Todos los comandos disponibles en Astaroth_VT Bot.</p>
+<section class="seccion" id="comandos">
+  <div class="seccion-etiqueta">Referencia completa</div>
+  <h2 class="seccion-titulo">Comandos — Prefijo <span style="color:var(--rojo-neon)">.</span></h2>
+  <p class="seccion-desc">Todos los comandos disponibles. Escribe <strong style="color:var(--blanco)">.ayuda</strong> en Discord para verlos también ahí.</p>
 
-  <div class="comandos-tabs">
-    <button class="tab activo" onclick="filtrar('todos', this)">Todos</button>
-    <button class="tab" onclick="filtrar('musica', this)">🎵 Música</button>
-    <button class="tab" onclick="filtrar('mod', this)">🛡️ Moderación</button>
-    <button class="tab" onclick="filtrar('gaming', this)">🎮 Gaming</button>
-    <button class="tab" onclick="filtrar('general', this)">⚙️ General</button>
+  <div class="tabs">
+    <button class="tab activo" onclick="filtrar('todos',this)">Todos</button>
+    <button class="tab" onclick="filtrar('musica',this)">🎵 Música</button>
+    <button class="tab" onclick="filtrar('mod',this)">🛡️ Moderación</button>
+    <button class="tab" onclick="filtrar('gaming',this)">🎮 Gaming</button>
+    <button class="tab" onclick="filtrar('general',this)">⚙️ General</button>
+    <button class="tab" onclick="filtrar('anuncios',this)">📢 Anuncios</button>
   </div>
 
-  <div class="comandos-lista" id="lista-comandos">
-    <div class="comando-item" data-cat="musica">
-      <div class="comando-emoji">🎵</div>
-      <div>
-        <div class="comando-nombre">.play [canción]</div>
-        <div class="comando-desc">Agrega una canción a la cola de reproducción</div>
+  <div class="comandos-grid" id="lista-cmds">
+    <div class="cmd fadeup" data-cat="musica">
+      <div class="cmd-emoji">🎵</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.play [canción]</div>
+        <div class="cmd-desc">Agrega una canción a la cola. Debes estar en un canal de voz.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="musica">
-      <div class="comando-emoji">⏭️</div>
-      <div>
-        <div class="comando-nombre">.skip</div>
-        <div class="comando-desc">Salta la canción actual y reproduce la siguiente</div>
+    <div class="cmd fadeup" data-cat="musica">
+      <div class="cmd-emoji">⏭️</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.skip</div>
+        <div class="cmd-desc">Salta la canción actual y reproduce la siguiente.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="musica">
-      <div class="comando-emoji">⏹️</div>
-      <div>
-        <div class="comando-nombre">.stop</div>
-        <div class="comando-desc">Detiene la música y limpia la cola</div>
+    <div class="cmd fadeup" data-cat="musica">
+      <div class="cmd-emoji">⏹️</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.stop</div>
+        <div class="cmd-desc">Detiene la música y limpia completamente la cola.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="musica">
-      <div class="comando-emoji">📋</div>
-      <div>
-        <div class="comando-nombre">.cola</div>
-        <div class="comando-desc">Muestra todas las canciones en la cola actual</div>
+    <div class="cmd fadeup" data-cat="musica">
+      <div class="cmd-emoji">📋</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.cola</div>
+        <div class="cmd-desc">Muestra todas las canciones en la cola actual.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="mod">
-      <div class="comando-emoji">🔨</div>
-      <div>
-        <div class="comando-nombre">.ban @usuario [razón]</div>
-        <div class="comando-desc">Banea a un usuario del servidor permanentemente</div>
+    <div class="cmd fadeup" data-cat="mod">
+      <div class="cmd-emoji">🔨</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.ban @usuario [razón]</div>
+        <div class="cmd-desc">Banea permanentemente a un usuario del servidor.</div>
       </div>
+      <span class="cmd-badge badge-admin">ADMIN</span>
     </div>
-    <div class="comando-item" data-cat="mod">
-      <div class="comando-emoji">👢</div>
-      <div>
-        <div class="comando-nombre">.kick @usuario [razón]</div>
-        <div class="comando-desc">Expulsa a un usuario del servidor</div>
+    <div class="cmd fadeup" data-cat="mod">
+      <div class="cmd-emoji">👢</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.kick @usuario [razón]</div>
+        <div class="cmd-desc">Expulsa a un usuario del servidor.</div>
       </div>
+      <span class="cmd-badge badge-mod">MOD</span>
     </div>
-    <div class="comando-item" data-cat="mod">
-      <div class="comando-emoji">🗑️</div>
-      <div>
-        <div class="comando-nombre">.limpiar [cantidad]</div>
-        <div class="comando-desc">Elimina una cantidad de mensajes del canal</div>
+    <div class="cmd fadeup" data-cat="mod">
+      <div class="cmd-emoji">🗑️</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.limpiar [cantidad]</div>
+        <div class="cmd-desc">Elimina una cantidad de mensajes del canal.</div>
       </div>
+      <span class="cmd-badge badge-mod">MOD</span>
     </div>
-    <div class="comando-item" data-cat="gaming">
-      <div class="comando-emoji">🎮</div>
-      <div>
-        <div class="comando-nombre">.gaming [juego]</div>
-        <div class="comando-desc">Anuncia una sesión de gaming en el servidor</div>
+    <div class="cmd fadeup" data-cat="gaming">
+      <div class="cmd-emoji">🎮</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.gaming [juego]</div>
+        <div class="cmd-desc">Anuncia una sesión de gaming e invita a otros miembros.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="gaming">
-      <div class="comando-emoji">👥</div>
-      <div>
-        <div class="comando-nombre">.lfg [mensaje]</div>
-        <div class="comando-desc">Busca equipo para jugar con otros miembros</div>
+    <div class="cmd fadeup" data-cat="gaming">
+      <div class="cmd-emoji">👥</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.lfg [mensaje]</div>
+        <div class="cmd-desc">Looking For Group — busca equipo para jugar.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="general">
-      <div class="comando-emoji">🏓</div>
-      <div>
-        <div class="comando-nombre">.ping</div>
-        <div class="comando-desc">Muestra la latencia actual del bot</div>
+    <div class="cmd fadeup" data-cat="general">
+      <div class="cmd-emoji">🏓</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.ping</div>
+        <div class="cmd-desc">Muestra la latencia actual del bot con indicador de estado.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="general">
-      <div class="comando-emoji">ℹ️</div>
-      <div>
-        <div class="comando-nombre">.info</div>
-        <div class="comando-desc">Muestra información completa del bot</div>
+    <div class="cmd fadeup" data-cat="general">
+      <div class="cmd-emoji">ℹ️</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.info</div>
+        <div class="cmd-desc">Muestra información completa del bot y sus comandos.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="general">
-      <div class="comando-emoji">📖</div>
-      <div>
-        <div class="comando-nombre">.ayuda</div>
-        <div class="comando-desc">Lista todos los comandos disponibles</div>
+    <div class="cmd fadeup" data-cat="general">
+      <div class="cmd-emoji">📖</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.ayuda</div>
+        <div class="cmd-desc">Lista todos los comandos disponibles en Discord.</div>
       </div>
+      <span class="cmd-badge badge-todos">TODOS</span>
     </div>
-    <div class="comando-item" data-cat="general">
-      <div class="comando-emoji">📢</div>
-      <div>
-        <div class="comando-nombre">.anuncio [mensaje]</div>
-        <div class="comando-desc">Envía un anuncio oficial (solo administradores)</div>
+    <div class="cmd fadeup" data-cat="anuncios">
+      <div class="cmd-emoji">📢</div>
+      <div style="flex:1">
+        <div class="cmd-nombre">.anuncio [mensaje]</div>
+        <div class="cmd-desc">Envía un anuncio oficial al canal de avisos con @everyone.</div>
       </div>
+      <span class="cmd-badge badge-admin">ADMIN</span>
     </div>
   </div>
 </section>
 
+<div class="divisor"></div>
+
+<!-- NOVEDADES -->
+<section class="seccion" id="novedades">
+  <div class="seccion-etiqueta">Historial de cambios</div>
+  <h2 class="seccion-titulo">Novedades del bot</h2>
+  <p class="seccion-desc">Actualizaciones y mejoras recientes de Astaroth_VT Bot.</p>
+
+  <div class="novedades-lista">
+    <div class="novedad fadeup">
+      <div class="novedad-icon">🔒</div>
+      <div>
+        <div class="novedad-titulo">Token seguro con variables de entorno</div>
+        <div class="novedad-desc">El token del bot ahora se gestiona de forma segura mediante variables de entorno en Railway.</div>
+      </div>
+      <div class="novedad-fecha">Jun 2026</div>
+    </div>
+    <div class="novedad fadeup">
+      <div class="novedad-icon">🎨</div>
+      <div>
+        <div class="novedad-titulo">Rediseño completo de embeds</div>
+        <div class="novedad-desc">Todos los comandos ahora tienen embeds con diseño profesional, separadores y footers personalizados.</div>
+      </div>
+      <div class="novedad-fecha">Jun 2026</div>
+    </div>
+    <div class="novedad fadeup">
+      <div class="novedad-icon">🌐</div>
+      <div>
+        <div class="novedad-titulo">Página web oficial lanzada</div>
+        <div class="novedad-desc">Se lanzó la página web oficial del bot con información completa, comandos y sección de soporte.</div>
+      </div>
+      <div class="novedad-fecha">Jun 2026</div>
+    </div>
+    <div class="novedad fadeup">
+      <div class="novedad-icon">🚀</div>
+      <div>
+        <div class="novedad-titulo">Bot desplegado en Railway 24/7</div>
+        <div class="novedad-desc">El bot ahora corre 24/7 en Railway sin necesidad de tener la PC encendida.</div>
+      </div>
+      <div class="novedad-fecha">Jun 2026</div>
+    </div>
+    <div class="novedad fadeup">
+      <div class="novedad-icon">✨</div>
+      <div>
+        <div class="novedad-titulo">Prefijo cambiado a punto (.)</div>
+        <div class="novedad-desc">El prefijo del bot cambió de ! a . para evitar conflictos con otros bots del servidor.</div>
+      </div>
+      <div class="novedad-fecha">Jun 2026</div>
+    </div>
+  </div>
+</section>
+
+<div class="divisor"></div>
+
+<!-- SOPORTE -->
+<section class="seccion" id="soporte">
+  <div class="seccion-etiqueta">¿Necesitas ayuda?</div>
+  <h2 class="seccion-titulo">Soporte y comunidad</h2>
+  <p class="seccion-desc">Únete al servidor oficial o invita el bot directamente a tu servidor.</p>
+
+  <div class="soporte-grid">
+    <a href="https://discord.gg/Yk6BkHY73h" target="_blank" class="soporte-card fadeup">
+      <span class="soporte-icon">💬</span>
+      <div class="soporte-titulo">Servidor de Discord</div>
+      <div class="soporte-desc">Únete a la comunidad oficial de Astaroth_VT. Soporte directo, novedades y eventos.</div>
+      <span class="soporte-btn" style="background:#5865F2;color:white">Unirse ahora</span>
+    </a>
+    <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="soporte-card fadeup">
+      <span class="soporte-icon">🤖</span>
+      <div class="soporte-titulo">Invitar el Bot</div>
+      <div class="soporte-desc">Añade Astaroth_VT a tu servidor en un clic. Completamente gratis y sin configuración complicada.</div>
+      <span class="soporte-btn" style="background:var(--degradado);color:white">Añadir al servidor</span>
+    </a>
+    <a href="https://github.com/AstarothVT/AstarothBot" target="_blank" class="soporte-card fadeup">
+      <span class="soporte-icon">📁</span>
+      <div class="soporte-titulo">Código Fuente</div>
+      <div class="soporte-desc">El bot es de código abierto. Puedes explorar cómo funciona en el repositorio de GitHub.</div>
+      <span class="soporte-btn" style="background:#1A1A1A;color:white;border:1px solid #333">Ver en GitHub</span>
+    </a>
+  </div>
+</section>
+
 <!-- CTA FINAL -->
-<div class="cta-section" id="invitar">
+<div class="cta" id="invitar">
   <h2>¿Listo para añadirlo<br>a tu servidor?</h2>
   <p>Gratis, sin configuración complicada. Un clic y listo.</p>
-  <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-primario">
-    🚀 Añadir Astaroth_VT Bot
-  </a>
+  <div class="cta-btns">
+    <a href="https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands" target="_blank" class="btn-rojo">🚀 Añadir Astaroth_VT Bot</a>
+    <a href="https://discord.gg/Yk6BkHY73h" target="_blank" class="btn-discord">💬 Unirse al servidor</a>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -714,7 +1011,9 @@
   <ul class="footer-links">
     <li><a href="#caracteristicas">Características</a></li>
     <li><a href="#comandos">Comandos</a></li>
-    <li><a href="https://discord.gg/tu-servidor" target="_blank">Discord</a></li>
+    <li><a href="#novedades">Novedades</a></li>
+    <li><a href="#soporte">Soporte</a></li>
+    <li><a href="https://discord.gg/Yk6BkHY73h" target="_blank">Discord</a></li>
   </ul>
 </footer>
 
@@ -722,31 +1021,20 @@
   function filtrar(cat, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
     btn.classList.add('activo');
-    document.querySelectorAll('.comando-item').forEach(item => {
-      if (cat === 'todos' || item.dataset.cat === cat) {
-        item.style.display = 'flex';
-      } else {
-        item.style.display = 'none';
-      }
+    document.querySelectorAll('.cmd').forEach(item => {
+      item.style.display = (cat === 'todos' || item.dataset.cat === cat) ? 'flex' : 'none';
     });
   }
 
-  // Animación suave al hacer scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 70);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.08 });
 
-  document.querySelectorAll('.feature-card, .comando-item').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(el);
-  });
+  document.querySelectorAll('.fadeup').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
