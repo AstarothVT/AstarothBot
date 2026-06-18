@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Astaroth_VT Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo: #CC0000;
+    --rojo-neon: #FF2222;
+    --negro: #080808;
+    --negro-card: #101010;
+    --negro-borde: #1C1C1C;
+    --gris: #777777;
+    --gris-claro: #AAAAAA;
+    --blanco: #F0F0F0;
+    --degradado: linear-gradient(135deg, #CC0000, #FF4444);
+    --verde: #00CC66;
+    --azul-discord: #5865F2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--negro);
+    color: var(--blanco);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* FONDO */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(204,0,0,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(204,0,0,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* LOGIN */
+  .login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(204,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  }
+
+  .login-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .login-logo {
+    width: 64px; height: 64px;
+    background: var(--degradado);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 20px rgba(204,0,0,0.3);
+  }
+
+  .login-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .login-titulo span { color: var(--rojo-neon); }
+
+  .login-desc {
+    color: var(--gris-claro);
+    font-size: 14px;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  .btn-discord-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--azul-discord);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 20px rgba(88,101,242,0.3);
+  }
+
+  .btn-discord-login:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .login-nota {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--gris);
+    line-height: 1.6;
+  }
+
+  /* DASHBOARD */
+  .dashboard { display: none; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--negro-card);
+    border-right: 1px solid var(--negro-borde);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--negro-borde);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--degradado);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .sidebar-logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .sidebar-logo-text span { color: var(--rojo-neon); }
+
+  .sidebar-servidor {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid var(--negro-borde);
+    margin-bottom: 16px;
+  }
+
+  .servidor-select {
+    width: 100%;
+    background: var(--negro);
+    border: 1px solid var(--negro-borde);
+    color: var(--blanco);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .servidor-select:focus { border-color: rgba(204,0,0,0.4); }
+
+  .sidebar-seccion {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-seccion-titulo {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gris);
+    padding: 0 8px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    color: var(--gris-claro);
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .sidebar-item:hover { background: rgba(255,255,255,0.05); color: var(--blanco); }
+  .sidebar-item.activo { background: rgba(204,0,0,0.12); color: var(--blanco); }
+  .sidebar-item.activo .item-icon { color: var(--rojo-neon); }
+
+  .item-icon { font-size: 16px; width: 18px; text-align: center; }
+
+  .item-badge {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+
+  .badge-nuevo { background: rgba(204,0,0,0.2); color: var(--rojo-neon); border: 1px solid rgba(204,0,0,0.3); }
+  .badge-pro { background: rgba(255,180,0,0.15); color: #FFB400; border: 1px solid rgba(255,180,0,0.3); }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 16px 0;
+    border-top: 1px solid var(--negro-borde);
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--degradado);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .user-nombre { font-size: 13px; font-weight: 600; }
+  .user-tag { font-size: 11px; color: var(--gris); }
+
+  .btn-logout {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--gris);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .btn-logout:hover { color: var(--rojo-neon); }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 260px;
+    padding: 32px;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .page-desc { color: var(--gris-claro); font-size: 14px; }
+
+  /* CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 14px;
+    padding: 20px 22px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: rgba(204,0,0,0.3); }
+
+  .stat-card-label {
+    font-size: 12px;
+    color: var(--gris);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .stat-card-valor {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    background: var(--degradado);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card-sub { font-size: 12px; color: var(--gris); }
+
+  /* SECCIONES DEL DASHBOARD */
+  .panel {
+    display: none;
+  }
+
+  .panel.activo { display: block; }
+
+  .seccion-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .seccion-card-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* FORMULARIOS */
+  .form-grupo {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gris-claro);
+    margin-bottom: 8px;
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    background: var(--negro);
+    border: 1px solid var(--negro-borde);
+    color: var(--blanco);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus {
+    border-color: rgba(204,0,0,0.5);
+  }
+
+  .form-textarea {
+    width: 100%;
+    background: var(--negro);
+    border: 1px solid var(--negro-borde);
+    color: var(--blanco);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+  }
+
+  .form-textarea:focus { border-color: rgba(204,0,0,0.5); }
+
+  .form-hint { font-size: 12px; color: var(--gris); margin-top: 6px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* TOGGLE */
+  .toggle-grupo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--negro-borde);
+  }
+
+  .toggle-grupo:last-child { border-bottom: none; }
+
+  .toggle-info-titulo { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .toggle-info-desc { font-size: 12px; color: var(--gris); }
+
+  .toggle {
+    position: relative;
+    width: 44px; height: 24px;
+    flex-shrink: 0;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--negro-borde);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: var(--gris);
+    border-radius: 50%;
+    transition: transform 0.3s, background 0.3s;
+  }
+
+  .toggle input:checked + .toggle-slider { background: rgba(204,0,0,0.3); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--rojo-neon); }
+
+  /* BOTONES */
+  .btn-guardar {
+    background: var(--degradado);
+    color: white;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 16px rgba(204,0,0,0.3);
+  }
+
+  .btn-guardar:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-secundario {
+    background: transparent;
+    color: var(--gris-claro);
+    border: 1px solid var(--negro-borde);
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-secundario:hover { border-color: rgba(204,0,0,0.4); color: var(--blanco); }
+
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+
+  /* PRO LOCK */
+  .pro-overlay {
+    position: relative;
+  }
+
+  .pro-lock {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,8,8,0.85);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+    backdrop-filter: blur(3px);
+  }
+
+  .pro-lock-icon { font-size: 36px; }
+
+  .pro-lock-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #FFB400;
+  }
+
+  .pro-lock-desc { font-size: 13px; color: var(--gris-claro); text-align: center; max-width: 260px; }
+
+  .btn-pro {
+    background: linear-gradient(135deg, #FFB400, #FF8C00);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+  }
+
+  .btn-pro:hover { opacity: 0.85; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: #1A1A1A;
+    border: 1px solid rgba(0,204,102,0.3);
+    color: var(--verde);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .toast.visible { transform: translateY(0); opacity: 1; }
+
+  /* STATUS */
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .status-online { background: var(--verde); box-shadow: 0 0 6px var(--verde); }
+  .status-offline { background: #FF4444; }
+
+  /* COMANDO LISTA */
+  .cmd-lista { display: flex; flex-direction: column; gap: 8px; }
+
+  .cmd-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--negro);
+    border: 1px solid var(--negro-borde);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .cmd-item:hover { border-color: rgba(204,0,0,0.25); }
+  .cmd-nombre-dash { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: var(--rojo-neon); }
+  .cmd-desc-dash { font-size: 12px; color: var(--gris); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="login-page" id="login-page">
+  <div class="login-grid"></div>
+  <div class="login-card">
+    <div class="login-logo">🔥</div>
+    <div class="login-titulo">Astaroth<span>_VT</span></div>
+    <div class="login-desc">
+      Inicia sesión con tu cuenta de Discord para acceder al panel de configuración del bot.
+    </div>
+    <button class="btn-discord-login" onclick="simularLogin()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.082.118 18.104.136 18.117a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+      </svg>
+      Iniciar sesión con Discord
+    </button>
+    <p class="login-nota">
+      Solo los administradores de servidores pueden configurar el bot.<br>
+      No almacenamos tu contraseña.
+    </p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🔥</div>
+      <span class="sidebar-logo-text">Astaroth<span>_VT</span></span>
+    </div>
+
+    <div class="sidebar-servidor">
+      <select class="servidor-select" id="servidor-select">
+        <option>🔥 Servidor de Astaroth_VT</option>
+        <option>⚔️ Mi otro servidor</option>
+      </select>
+    </div>
+
+    <div class="sidebar-seccion">
+      <div class="sidebar-seccion-titulo">Principal</div>
+      <button class="sidebar-item activo" onclick="cambiarPanel('inicio', this)">
+        <span class="item-icon">🏠</span> Inicio
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('ajustes', this)">
+        <span class="item-icon">⚙️</span> Ajustes
+      </button>
+    </div>
+
+    <div class="sidebar-seccion">
+      <div class="sidebar-seccion-titulo">Anuncios</div>
+      <button class="sidebar-item" onclick="cambiarPanel('bienvenidas', this)">
+        <span class="item-icon">👋</span> Bienvenidas
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('despedidas', this)">
+        <span class="item-icon">😢</span> Despedidas
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('stream', this)">
+        <span class="item-icon">🔴</span> Alertas Stream
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('anuncios', this)">
+        <span class="item-icon">📢</span> Anuncios
+      </button>
+    </div>
+
+    <div class="sidebar-seccion">
+      <div class="sidebar-seccion-titulo">Moderación</div>
+      <button class="sidebar-item" onclick="cambiarPanel('moderacion', this)">
+        <span class="item-icon">🛡️</span> Moderación
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('automod', this)">
+        <span class="item-icon">🤖</span> Auto-mod
+        <span class="item-badge badge-nuevo">NUEVO</span>
+      </button>
+    </div>
+
+    <div class="sidebar-seccion">
+      <div class="sidebar-seccion-titulo">Entretenimiento</div>
+      <button class="sidebar-item" onclick="cambiarPanel('musica', this)">
+        <span class="item-icon">🎵</span> Música
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('niveles', this)">
+        <span class="item-icon">📊</span> Niveles
+        <span class="item-badge badge-pro">PRO</span>
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('gaming', this)">
+        <span class="item-icon">🎮</span> Gaming
+      </button>
+    </div>
+
+    <div class="sidebar-seccion">
+      <div class="sidebar-seccion-titulo">Utilidades</div>
+      <button class="sidebar-item" onclick="cambiarPanel('tickets', this)">
+        <span class="item-icon">🎫</span> Tickets
+        <span class="item-badge badge-pro">PRO</span>
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('autoroles', this)">
+        <span class="item-icon">🏷️</span> Autoroles
+        <span class="item-badge badge-pro">PRO</span>
+      </button>
+      <button class="sidebar-item" onclick="cambiarPanel('comandos', this)">
+        <span class="item-icon">📖</span> Comandos
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">A</div>
+        <div>
+          <div class="user-nombre" id="user-nombre">Astaroth_VT</div>
+          <div class="user-tag" id="user-tag">#5694</div>
+        </div>
+        <button class="btn-logout" onclick="cerrarSesion()" title="Cerrar sesión">↩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- INICIO -->
+    <div class="panel activo" id="panel-inicio">
+      <div class="page-header">
+        <div class="page-titulo">Panel de Control 🔥</div>
+        <div class="page-desc">
+          <span class="status-dot status-online"></span>
+          Astaroth_VT está online · Última actualización hace 2 minutos
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">Miembros</div>
+          <div class="stat-card-valor">4</div>
+          <div class="stat-card-sub">En tu servidor</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Comandos usados</div>
+          <div class="stat-card-valor">28</div>
+          <div class="stat-card-sub">Esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Latencia</div>
+          <div class="stat-card-valor">42ms</div>
+          <div class="stat-card-sub">Tiempo de respuesta</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Servidores</div>
+          <div class="stat-card-valor">3</div>
+          <div class="stat-card-sub">Bot activo en</div>
+        </div>
+      </div>
+
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚡ Acciones rápidas</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn-guardar" onclick="cambiarPanel('bienvenidas', null)">👋 Configurar bienvenidas</button>
+          <button class="btn-guardar" onclick="cambiarPanel('stream', null)">🔴 Configurar stream</button>
+          <button class="btn-guardar" onclick="cambiarPanel('moderacion', null)">🛡️ Ver moderación</button>
+          <button class="btn-secundario" onclick="cambiarPanel('comandos', null)">📖 Ver comandos</button>
+        </div>
+      </div>
+
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">📋 Estado de configuración</div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">👋 Canal de bienvenida</div>
+            <div class="toggle-info-desc">Configura en la sección Bienvenidas</div>
+          </div>
+          <span style="font-size:12px; color:var(--rojo-neon)">⚠️ Sin configurar</span>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">📢 Canal de anuncios</div>
+            <div class="toggle-info-desc">Configura en la sección Anuncios</div>
+          </div>
+          <span style="font-size:12px; color:var(--rojo-neon)">⚠️ Sin configurar</span>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">🔴 Canal de stream</div>
+            <div class="toggle-info-desc">Configura en la sección Alertas Stream</div>
+          </div>
+          <span style="font-size:12px; color:var(--rojo-neon)">⚠️ Sin configurar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AJUSTES -->
+    <div class="panel" id="panel-ajustes">
+      <div class="page-header">
+        <div class="page-titulo">⚙️ Ajustes generales</div>
+        <div class="page-desc">Configuración general del bot para este servidor</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">🔧 Configuración básica</div>
+        <div class="form-grupo">
+          <label class="form-label">Prefijo del bot</label>
+          <input type="text" class="form-input" value="." placeholder="Ejemplo: . ! ?">
+          <div class="form-hint">Carácter que activa los comandos del bot</div>
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Idioma</label>
+          <select class="form-select">
+            <option>🇪🇸 Español</option>
+            <option>🇺🇸 English</option>
+          </select>
+        </div>
+        <div class="seccion-card-titulo" style="margin-top:24px; margin-bottom:16px;">🔔 Notificaciones</div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mensajes de bienvenida</div>
+            <div class="toggle-info-desc">Enviar mensaje cuando alguien entra</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mensajes de despedida</div>
+            <div class="toggle-info-desc">Enviar mensaje cuando alguien sale</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Alertas de boost</div>
+            <div class="toggle-info-desc">Notificar cuando alguien boostea el servidor</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Ajustes guardados')">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIENVENIDAS -->
+    <div class="panel" id="panel-bienvenidas">
+      <div class="page-header">
+        <div class="page-titulo">👋 Bienvenidas</div>
+        <div class="page-desc">Configura el mensaje de bienvenida para nuevos miembros</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">📌 Canal y mensaje</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal de bienvenida</label>
+          <select class="form-select">
+            <option>Selecciona un canal...</option>
+            <option>#bienvenida</option>
+            <option>#general</option>
+            <option>#anuncios</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Mensaje personalizado</label>
+          <textarea class="form-textarea" placeholder="¡Bienvenido {usuario} al servidor! Eres el miembro número {miembros}.">¡Hola {usuario}! Bienvenido al servidor de Astaroth_VT 🔥 Eres el miembro número {miembros} 🎉</textarea>
+          <div class="form-hint">Variables: {usuario} {miembros} {servidor}</div>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mencionar al usuario</div>
+            <div class="toggle-info-desc">Ping al nuevo miembro en el mensaje</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mostrar avatar</div>
+            <div class="toggle-info-desc">Incluir foto de perfil en el embed</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Bienvenidas configuradas')">Guardar</button>
+          <button class="btn-secundario">Previsualizar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESPEDIDAS -->
+    <div class="panel" id="panel-despedidas">
+      <div class="page-header">
+        <div class="page-titulo">😢 Despedidas</div>
+        <div class="page-desc">Configura el mensaje cuando alguien abandona el servidor</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">📌 Canal y mensaje</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal de despedida</label>
+          <select class="form-select">
+            <option>Selecciona un canal...</option>
+            <option>#bienvenida</option>
+            <option>#general</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Mensaje de despedida</label>
+          <textarea class="form-textarea">{usuario} ha abandonado el servidor 😢 Ahora somos {miembros} miembros.</textarea>
+          <div class="form-hint">Variables: {usuario} {miembros} {servidor}</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Despedidas configuradas')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STREAM -->
+    <div class="panel" id="panel-stream">
+      <div class="page-header">
+        <div class="page-titulo">🔴 Alertas de Stream</div>
+        <div class="page-desc">Notifica automáticamente cuando empieces a transmitir</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">📺 Configuración</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal de notificaciones</label>
+          <select class="form-select">
+            <option>Selecciona un canal...</option>
+            <option>#notificaciones</option>
+            <option>#stream</option>
+            <option>#general</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Usuario de Twitch</label>
+          <input type="text" class="form-input" placeholder="astaroth_vt" value="astaroth_vt">
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Mensaje de alerta</label>
+          <textarea class="form-textarea">🔴 ¡{usuario} está en DIRECTO! No te pierdas el stream 🎮</textarea>
+          <div class="form-hint">Variables: {usuario} {juego} {titulo} {url}</div>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mencionar @everyone</div>
+            <div class="toggle-info-desc">Notificar a todos cuando empiece el stream</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Alertas de stream configuradas')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANUNCIOS -->
+    <div class="panel" id="panel-anuncios">
+      <div class="page-header">
+        <div class="page-titulo">📢 Anuncios</div>
+        <div class="page-desc">Configura el canal de anuncios y envía comunicados</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">📌 Canal de anuncios</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal</label>
+          <select class="form-select">
+            <option>Selecciona un canal...</option>
+            <option>#avisos</option>
+            <option>#anuncios</option>
+            <option>#general</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Canal configurado')">Guardar</button>
+        </div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">✉️ Enviar anuncio</div>
+        <div class="form-grupo">
+          <label class="form-label">Título del anuncio</label>
+          <input type="text" class="form-input" placeholder="📢 Anuncio importante">
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Mensaje</label>
+          <textarea class="form-textarea" placeholder="Escribe tu anuncio aquí..."></textarea>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Mencionar @everyone</div>
+            <div class="toggle-info-desc">Notificar a todos los miembros</div>
+          </div>
+          <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('📢 Anuncio enviado')">Enviar anuncio</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODERACIÓN -->
+    <div class="panel" id="panel-moderacion">
+      <div class="page-header">
+        <div class="page-titulo">🛡️ Moderación</div>
+        <div class="page-desc">Herramientas de moderación del servidor</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚙️ Configuración</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal de logs de moderación</label>
+          <select class="form-select">
+            <option>Selecciona un canal...</option>
+            <option>#logs</option>
+            <option>#mod-logs</option>
+          </select>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Registrar bans</div>
+            <div class="toggle-info-desc">Guardar log cuando se banea a alguien</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Registrar kicks</div>
+            <div class="toggle-info-desc">Guardar log cuando se expulsa a alguien</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Registrar limpieza de mensajes</div>
+            <div class="toggle-info-desc">Guardar log cuando se usan .limpiar</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Moderación configurada')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTO-MOD -->
+    <div class="panel" id="panel-automod">
+      <div class="page-header">
+        <div class="page-titulo">🤖 Auto-moderación</div>
+        <div class="page-desc">Configuración automática de moderación</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">🔧 Filtros automáticos</div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Anti-spam</div>
+            <div class="toggle-info-desc">Eliminar mensajes repetidos automáticamente</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Anti-links</div>
+            <div class="toggle-info-desc">Eliminar links no permitidos</div>
+          </div>
+          <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Filtro de palabras</div>
+            <div class="toggle-info-desc">Eliminar mensajes con palabras prohibidas</div>
+          </div>
+          <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="form-grupo" style="margin-top:20px;">
+          <label class="form-label">Palabras prohibidas</label>
+          <textarea class="form-textarea" placeholder="palabra1, palabra2, palabra3"></textarea>
+          <div class="form-hint">Separadas por comas</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Auto-mod configurado')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÚSICA -->
+    <div class="panel" id="panel-musica">
+      <div class="page-header">
+        <div class="page-titulo">🎵 Música</div>
+        <div class="page-desc">Configuración del sistema de música</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚙️ Ajustes de música</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal de texto para música</label>
+          <select class="form-select">
+            <option>Cualquier canal</option>
+            <option>#música</option>
+            <option>#bot-comandos</option>
+          </select>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Solo en canal de voz</div>
+            <div class="toggle-info-desc">Requerir estar en canal de voz para usar música</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Cualquiera puede usar música</div>
+            <div class="toggle-info-desc">Todos los miembros pueden reproducir</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Música configurada')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NIVELES PRO -->
+    <div class="panel" id="panel-niveles">
+      <div class="page-header">
+        <div class="page-titulo">📊 Sistema de niveles</div>
+        <div class="page-desc">Recompensa a los miembros más activos</div>
+      </div>
+      <div class="pro-overlay">
+        <div class="pro-lock">
+          <div class="pro-lock-icon">🔒</div>
+          <div class="pro-lock-titulo">Función PRO</div>
+          <div class="pro-lock-desc">El sistema de niveles está disponible en el plan PRO. Obtén XP, rangos y recompensas para tu comunidad.</div>
+          <button class="btn-pro">✨ Obtener PRO</button>
+        </div>
+        <div class="seccion-card" style="filter:blur(3px); pointer-events:none;">
+          <div class="seccion-card-titulo">⚙️ Configuración de niveles</div>
+          <div class="form-grupo">
+            <label class="form-label">XP por mensaje</label>
+            <input type="number" class="form-input" value="10">
+          </div>
+          <div class="form-grupo">
+            <label class="form-label">Canal de subida de nivel</label>
+            <select class="form-select"><option>#general</option></select>
+          </div>
+          <div class="toggle-grupo">
+            <div><div class="toggle-info-titulo">Anunciar subida de nivel</div></div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMING -->
+    <div class="panel" id="panel-gaming">
+      <div class="page-header">
+        <div class="page-titulo">🎮 Gaming</div>
+        <div class="page-desc">Configura los comandos de gaming</div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚙️ Ajustes gaming</div>
+        <div class="form-grupo">
+          <label class="form-label">Canal para anuncios gaming</label>
+          <select class="form-select">
+            <option>Cualquier canal</option>
+            <option>#gaming</option>
+            <option>#general</option>
+          </select>
+        </div>
+        <div class="toggle-grupo">
+          <div>
+            <div class="toggle-info-titulo">Reacciones en .lfg</div>
+            <div class="toggle-info-desc">Agregar ✅ y ❌ automáticamente</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-guardar" onclick="mostrarToast('✅ Gaming configurado')">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TICKETS PRO -->
+    <div class="panel" id="panel-tickets">
+      <div class="page-header">
+        <div class="page-titulo">🎫 Sistema de Tickets</div>
+        <div class="page-desc">Soporte organizado para tu comunidad</div>
+      </div>
+      <div class="pro-overlay">
+        <div class="pro-lock">
+          <div class="pro-lock-icon">🔒</div>
+          <div class="pro-lock-titulo">Función PRO</div>
+          <div class="pro-lock-desc">Crea un sistema de tickets profesional para dar soporte a tu comunidad de forma organizada.</div>
+          <button class="btn-pro">✨ Obtener PRO</button>
+        </div>
+        <div class="seccion-card" style="filter:blur(3px); pointer-events:none;">
+          <div class="seccion-card-titulo">🎫 Configuración de tickets</div>
+          <div class="form-grupo">
+            <label class="form-label">Canal de tickets</label>
+            <select class="form-select"><option>#tickets</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTOROLES PRO -->
+    <div class="panel" id="panel-autoroles">
+      <div class="page-header">
+        <div class="page-titulo">🏷️ Autoroles</div>
+        <div class="page-desc">Asigna roles automáticamente</div>
+      </div>
+      <div class="pro-overlay">
+        <div class="pro-lock">
+          <div class="pro-lock-icon">🔒</div>
+          <div class="pro-lock-titulo">Función PRO</div>
+          <div class="pro-lock-desc">Asigna roles automáticamente cuando alguien entra al servidor o reacciona a un mensaje.</div>
+          <button class="btn-pro">✨ Obtener PRO</button>
+        </div>
+        <div class="seccion-card" style="filter:blur(3px); pointer-events:none;">
+          <div class="seccion-card-titulo">🏷️ Configuración de roles</div>
+          <div class="form-grupo">
+            <label class="form-label">Rol al entrar</label>
+            <select class="form-select"><option>Miembro</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMANDOS -->
+    <div class="panel" id="panel-comandos">
+      <div class="page-header">
+        <div class="page-titulo">📖 Comandos</div>
+        <div class="page-desc">Lista completa de comandos disponibles — Prefijo: <strong style="color:var(--rojo-neon)">.</strong></div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚙️ General</div>
+        <div class="cmd-lista">
+          <div class="cmd-item"><span class="cmd-nombre-dash">.ping</span><span class="cmd-desc-dash">Ver latencia del bot</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.info</span><span class="cmd-desc-dash">Información completa del bot</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.ayuda</span><span class="cmd-desc-dash">Lista de todos los comandos</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.config</span><span class="cmd-desc-dash">Ver configuración del servidor</span></div>
+        </div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">🎵 Música</div>
+        <div class="cmd-lista">
+          <div class="cmd-item"><span class="cmd-nombre-dash">.play [canción]</span><span class="cmd-desc-dash">Reproducir música</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.skip</span><span class="cmd-desc-dash">Saltar canción actual</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.stop</span><span class="cmd-desc-dash">Detener música y limpiar cola</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.cola</span><span class="cmd-desc-dash">Ver cola de canciones</span></div>
+        </div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">🛡️ Moderación</div>
+        <div class="cmd-lista">
+          <div class="cmd-item"><span class="cmd-nombre-dash">.ban @usuario</span><span class="cmd-desc-dash">Banear usuario — Solo admins</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.kick @usuario</span><span class="cmd-desc-dash">Expulsar usuario — Solo mods</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.limpiar [n]</span><span class="cmd-desc-dash">Borrar mensajes — Solo mods</span></div>
+        </div>
+      </div>
+      <div class="seccion-card">
+        <div class="seccion-card-titulo">⚙️ Configuración</div>
+        <div class="cmd-lista">
+          <div class="cmd-item"><span class="cmd-nombre-dash">.setbienvenida #canal</span><span class="cmd-desc-dash">Configurar canal de bienvenida</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.setdespedida #canal</span><span class="cmd-desc-dash">Configurar canal de despedida</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.setanuncios #canal</span><span class="cmd-desc-dash">Configurar canal de anuncios</span></div>
+          <div class="cmd-item"><span class="cmd-nombre-dash">.setstream #canal</span><span class="cmd-desc-dash">Configurar canal de stream</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Guardado correctamente</div>
+
+<script>
+  function simularLogin() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function cerrarSesion() {
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+  }
+
+  function cambiarPanel(nombre, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('activo'));
+    document.getElementById('panel-' + nombre).classList.add('activo');
+    if (btn) {
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('activo'));
+      btn.classList.add('activo');
+    }
+  }
+
+  function mostrarToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 3000);
+  }
+</script>
+</body>
+</html>

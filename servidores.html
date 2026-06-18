@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestionar servidores — Astaroth_VT Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo: #CC0000;
+    --rojo-neon: #FF2222;
+    --negro: #080808;
+    --negro-card: #101010;
+    --negro-borde: #1C1C1C;
+    --gris: #777777;
+    --gris-claro: #AAAAAA;
+    --blanco: #F0F0F0;
+    --degradado: linear-gradient(135deg, #CC0000, #FF4444);
+    --verde: #00CC66;
+    --azul-discord: #5865F2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--negro);
+    color: var(--blanco);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(204,0,0,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 85%, rgba(204,0,0,0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--negro-borde);
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--blanco);
+  }
+
+  .nav-logo-icon {
+    width: 34px; height: 34px;
+    background: var(--degradado);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 12px rgba(204,0,0,0.3);
+  }
+
+  .nav-logo-txt {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .nav-logo-txt span { color: var(--rojo-neon); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--negro-borde);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .nav-user:hover { border-color: rgba(204,0,0,0.4); }
+
+  .nav-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--degradado);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .nav-username { font-size: 13px; font-weight: 500; }
+
+  .btn-nav-logout {
+    background: transparent;
+    border: 1px solid var(--negro-borde);
+    color: var(--gris-claro);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-nav-logout:hover { border-color: rgba(204,0,0,0.4); color: var(--rojo-neon); }
+
+  /* LOGIN PAGE */
+  .login-page {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(204,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  }
+
+  .login-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 20px;
+    padding: 48px 44px;
+    text-align: center;
+    max-width: 440px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 60px rgba(0,0,0,0.5);
+  }
+
+  .login-logo {
+    width: 68px; height: 68px;
+    background: var(--degradado);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 28px rgba(204,0,0,0.35);
+  }
+
+  .login-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .login-titulo span { color: var(--rojo-neon); }
+
+  .login-desc {
+    color: var(--gris-claro);
+    font-size: 14px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+
+  .btn-discord-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--azul-discord);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 24px rgba(88,101,242,0.35);
+  }
+
+  .btn-discord-login:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .login-nota {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--gris);
+    line-height: 1.7;
+  }
+
+  /* SERVIDORES PAGE */
+  .servidores-page {
+    display: none;
+    position: relative;
+    z-index: 1;
+    padding: 48px 48px 80px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .page-titulo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .page-sub {
+    color: var(--gris-claro);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  /* BUSCADOR */
+  .search-wrap {
+    position: relative;
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris);
+    font-size: 16px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    color: var(--blanco);
+    padding: 13px 16px 13px 44px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input::placeholder { color: var(--gris); }
+  .search-input:focus { border-color: rgba(204,0,0,0.4); }
+
+  /* FILTROS */
+  .filtros {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .filtro-btn {
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--negro-borde);
+    background: transparent;
+    color: var(--gris-claro);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .filtro-btn:hover, .filtro-btn.activo {
+    border-color: var(--rojo);
+    color: var(--blanco);
+    background: rgba(204,0,0,0.1);
+  }
+
+  /* GRILLA DE SERVIDORES */
+  .servidores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .servidor-card {
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+
+  .servidor-card:hover {
+    border-color: rgba(204,0,0,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  /* BANNER DEL SERVIDOR */
+  .servidor-banner {
+    height: 90px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .servidor-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .servidor-banner-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  .servidor-banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(16,16,16,0.8) 100%);
+  }
+
+  /* ICONO DEL SERVIDOR */
+  .servidor-body {
+    padding: 0 18px 18px;
+    position: relative;
+  }
+
+  .servidor-icon-wrap {
+    margin-top: -26px;
+    margin-bottom: 12px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .servidor-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--negro-card);
+    background: var(--negro-borde);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+
+  .servidor-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+  .servidor-nombre {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .servidor-rol {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .rol-dueno {
+    background: rgba(204,0,0,0.15);
+    color: var(--rojo-neon);
+    border: 1px solid rgba(204,0,0,0.3);
+  }
+
+  .rol-admin {
+    background: rgba(255,140,0,0.12);
+    color: #FF8C00;
+    border: 1px solid rgba(255,140,0,0.3);
+  }
+
+  .servidor-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--gris);
+    margin-bottom: 16px;
+  }
+
+  .servidor-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .servidor-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-ir {
+    flex: 1;
+    padding: 9px 0;
+    background: var(--degradado);
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+    box-shadow: 0 2px 12px rgba(204,0,0,0.25);
+  }
+
+  .btn-ir:hover { opacity: 0.85; }
+
+  .btn-anadir {
+    flex: 1;
+    padding: 9px 0;
+    background: transparent;
+    color: var(--gris-claro);
+    border: 1px solid var(--negro-borde);
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-anadir:hover { border-color: rgba(204,0,0,0.4); color: var(--blanco); }
+
+  /* ESTADO BOT */
+  .bot-badge {
+    position: absolute;
+    top: 12px; right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .bot-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+  }
+
+  .bot-activo { color: var(--verde); }
+  .bot-activo .bot-dot { background: var(--verde); box-shadow: 0 0 5px var(--verde); }
+  .bot-inactivo { color: var(--gris); }
+  .bot-inactivo .bot-dot { background: var(--gris); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gris);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-txt { font-size: 16px; margin-bottom: 8px; color: var(--gris-claro); }
+  .empty-sub { font-size: 13px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: #1A1A1A;
+    border: 1px solid rgba(0,204,102,0.3);
+    color: var(--verde);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .toast.visible { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    .servidores-page { padding: 28px 20px 60px; }
+    nav { padding: 0 20px; }
+    .servidores-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🔥</div>
+    <span class="nav-logo-txt">Astaroth<span>_VT</span></span>
+  </a>
+  <div class="nav-right" id="nav-right-login">
+    <button class="btn-discord-login" style="width:auto;padding:8px 20px;font-size:13px;" onclick="hacerLogin()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.082.118 18.104.136 18.117a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+      </svg>
+      Iniciar sesión
+    </button>
+  </div>
+  <div class="nav-right" id="nav-right-user" style="display:none;">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">A</div>
+      <span class="nav-username" id="nav-username">Astaroth_VT</span>
+    </div>
+    <button class="btn-nav-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+</nav>
+
+<!-- LOGIN PAGE -->
+<div class="login-page" id="login-page">
+  <div class="login-grid"></div>
+  <div class="login-card">
+    <div class="login-logo">🔥</div>
+    <div class="login-titulo">Astaroth<span>_VT</span></div>
+    <div class="login-desc">
+      Inicia sesión con Discord para ver los servidores donde puedes gestionar el bot.
+    </div>
+    <button class="btn-discord-login" onclick="hacerLogin()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.082.118 18.104.136 18.117a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+      </svg>
+      Iniciar sesión con Discord
+    </button>
+    <p class="login-nota">
+      Solo verás servidores donde eres dueño o administrador.<br>
+      No almacenamos tu contraseña.
+    </p>
+  </div>
+</div>
+
+<!-- SERVIDORES PAGE -->
+<div class="servidores-page" id="servidores-page">
+  <div class="page-titulo">Selecciona un servidor</div>
+  <div class="page-sub">Servidores donde tienes permisos de administrador</div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="Buscar servidores..." id="search-input" oninput="filtrarServidores()">
+  </div>
+
+  <div class="filtros">
+    <button class="filtro-btn activo" onclick="setFiltro('todos', this)">Todos</button>
+    <button class="filtro-btn" onclick="setFiltro('bot-activo', this)">✅ Bot activo</button>
+    <button class="filtro-btn" onclick="setFiltro('sin-bot', this)">➕ Sin bot</button>
+    <button class="filtro-btn" onclick="setFiltro('dueno', this)">👑 Dueño/a</button>
+    <button class="filtro-btn" onclick="setFiltro('admin', this)">⚙️ Admin</button>
+  </div>
+
+  <div class="servidores-grid" id="servidores-grid">
+    <!-- Generado por JS -->
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Acción realizada</div>
+
+<script>
+// =====================
+//   DATOS DE EJEMPLO
+//   (simula los servidores reales donde el usuario tiene poder)
+// =====================
+const servidores = [
+  {
+    id: 1,
+    nombre: "Astaroth_VT — Oficial",
+    emoji: "🔥",
+    color: "#CC0000",
+    miembros: 4,
+    rol: "dueno",
+    botActivo: true
+  },
+  {
+    id: 2,
+    nombre: "Mi Servidor Gaming",
+    emoji: "🎮",
+    color: "#7B2FBE",
+    miembros: 12,
+    rol: "dueno",
+    botActivo: true
+  },
+  {
+    id: 3,
+    nombre: "Comunidad Pruebas",
+    emoji: "⚗️",
+    color: "#005999",
+    miembros: 7,
+    rol: "dueno",
+    botActivo: true
+  },
+  {
+    id: 4,
+    nombre: "ZENSHINRI",
+    emoji: "⛩️",
+    color: "#2D2D2D",
+    miembros: 85,
+    rol: "admin",
+    botActivo: false
+  },
+  {
+    id: 5,
+    nombre: "HATSU CHAN Community",
+    emoji: "🌸",
+    color: "#8B004B",
+    miembros: 230,
+    rol: "admin",
+    botActivo: false
+  },
+  {
+    id: 6,
+    nombre: "FRANCOGC | THE HUB",
+    emoji: "🏆",
+    color: "#CC4400",
+    miembros: 512,
+    rol: "admin",
+    botActivo: false
+  },
+  {
+    id: 7,
+    nombre: "MYSTIC MOON NETWORK",
+    emoji: "🌙",
+    color: "#1A0044",
+    miembros: 340,
+    rol: "dueno",
+    botActivo: false
+  },
+  {
+    id: 8,
+    nombre: "Chilltopia",
+    emoji: "🍃",
+    color: "#004422",
+    miembros: 190,
+    rol: "admin",
+    botActivo: false
+  }
+];
+
+let filtroActual = 'todos';
+let busqueda = '';
+
+function hacerLogin() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('servidores-page').style.display = 'block';
+  document.getElementById('nav-right-login').style.display = 'none';
+  document.getElementById('nav-right-user').style.display = 'flex';
+  renderServidores();
+}
+
+function cerrarSesion() {
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('servidores-page').style.display = 'none';
+  document.getElementById('nav-right-login').style.display = 'flex';
+  document.getElementById('nav-right-user').style.display = 'none';
+}
+
+function setFiltro(f, btn) {
+  filtroActual = f;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  renderServidores();
+}
+
+function filtrarServidores() {
+  busqueda = document.getElementById('search-input').value.toLowerCase();
+  renderServidores();
+}
+
+function renderServidores() {
+  const grid = document.getElementById('servidores-grid');
+  let lista = servidores.filter(s => {
+    const matchBusqueda = s.nombre.toLowerCase().includes(busqueda);
+    let matchFiltro = true;
+    if (filtroActual === 'bot-activo') matchFiltro = s.botActivo;
+    if (filtroActual === 'sin-bot') matchFiltro = !s.botActivo;
+    if (filtroActual === 'dueno') matchFiltro = s.rol === 'dueno';
+    if (filtroActual === 'admin') matchFiltro = s.rol === 'admin';
+    return matchBusqueda && matchFiltro;
+  });
+
+  if (lista.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-txt">No se encontraron servidores</div>
+        <div class="empty-sub">Prueba con otro filtro o busca por nombre</div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(s => `
+    <div class="servidor-card" data-id="${s.id}">
+      <div class="servidor-banner">
+        <div class="servidor-banner-fallback" style="background: linear-gradient(135deg, ${s.color}55, ${s.color}22);">
+          <span style="font-size:36px; opacity:0.6;">${s.emoji}</span>
+        </div>
+        <div class="servidor-banner-overlay"></div>
+      </div>
+      <div class="servidor-body">
+        <div class="servidor-icon-wrap">
+          <div class="servidor-icon" style="background: linear-gradient(135deg, ${s.color}, ${s.color}88);">
+            ${s.emoji}
+          </div>
+        </div>
+        <div class="${s.botActivo ? 'bot-badge bot-activo' : 'bot-badge bot-inactivo'}">
+          <span class="bot-dot"></span>
+          ${s.botActivo ? 'Bot activo' : 'Sin bot'}
+        </div>
+        <div class="servidor-nombre">${s.nombre}</div>
+        <span class="servidor-rol ${s.rol === 'dueno' ? 'rol-dueno' : 'rol-admin'}">
+          ${s.rol === 'dueno' ? '👑 Dueño/a' : '⚙️ Admin'}
+        </span>
+        <div class="servidor-meta">
+          <span>👥 ${s.miembros} miembros</span>
+        </div>
+        <div class="servidor-btns">
+          ${s.botActivo
+            ? `<button class="btn-ir" onclick="irDashboard(${s.id})">⚙️ Gestionar</button>`
+            : `<button class="btn-ir" onclick="irDashboard(${s.id})">⚙️ Gestionar</button>
+               <button class="btn-anadir" onclick="anadirBot(${s.id})">➕ Añadir bot</button>`
+          }
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function irDashboard(id) {
+  mostrarToast('🔄 Abriendo panel del servidor...');
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+}
+
+function anadirBot(id) {
+  window.open('https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands', '_blank');
+  mostrarToast('🚀 Abriendo Discord para añadir el bot');
+}
+
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 3000);
+}
+</script>
+</body>
+</html>
