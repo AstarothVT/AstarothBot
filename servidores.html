@@ -42,7 +42,6 @@
     z-index: 0;
   }
 
-  /* NAV */
   nav {
     position: sticky;
     top: 0;
@@ -96,11 +95,7 @@
     background: rgba(255,255,255,0.04);
     border: 1px solid var(--negro-borde);
     border-radius: 100px;
-    cursor: pointer;
-    transition: border-color 0.2s;
   }
-
-  .nav-user:hover { border-color: rgba(204,0,0,0.4); }
 
   .nav-avatar {
     width: 28px; height: 28px;
@@ -112,7 +107,7 @@
     font-weight: 700;
   }
 
-  .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .nav-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .nav-username { font-size: 13px; font-weight: 500; }
 
   .btn-nav-logout {
@@ -129,7 +124,6 @@
 
   .btn-nav-logout:hover { border-color: rgba(204,0,0,0.4); color: var(--rojo-neon); }
 
-  /* LOGIN PAGE */
   .login-page {
     min-height: calc(100vh - 60px);
     display: flex;
@@ -217,7 +211,6 @@
     line-height: 1.7;
   }
 
-  /* LOADING */
   .loading-page {
     display: none;
     min-height: calc(100vh - 60px);
@@ -238,13 +231,8 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-txt { color: var(--gris-claro); font-size: 14px; }
 
-  .loading-txt {
-    color: var(--gris-claro);
-    font-size: 14px;
-  }
-
-  /* SERVIDORES PAGE */
   .servidores-page {
     display: none;
     position: relative;
@@ -272,10 +260,7 @@
 
   .page-sub { color: var(--gris-claro); font-size: 14px; }
 
-  .page-stats {
-    display: flex;
-    gap: 20px;
-  }
+  .page-stats { display: flex; gap: 20px; }
 
   .pstat {
     text-align: center;
@@ -294,7 +279,6 @@
 
   .pstat-label { font-size: 11px; color: var(--gris); }
 
-  /* BUSCADOR */
   .search-wrap {
     position: relative;
     max-width: 500px;
@@ -326,7 +310,6 @@
   .search-input::placeholder { color: var(--gris); }
   .search-input:focus { border-color: rgba(204,0,0,0.4); }
 
-  /* FILTROS */
   .filtros {
     display: flex;
     gap: 8px;
@@ -353,14 +336,12 @@
     background: rgba(204,0,0,0.1);
   }
 
-  /* GRILLA */
   .servidores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
 
-  /* CARD */
   .servidor-card {
     background: var(--negro-card);
     border: 1px solid var(--negro-borde);
@@ -375,7 +356,6 @@
     box-shadow: 0 12px 40px rgba(0,0,0,0.5);
   }
 
-  /* BANNER */
   .servidor-banner {
     height: 88px;
     position: relative;
@@ -387,6 +367,8 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    filter: blur(2px) brightness(0.7);
+    transform: scale(1.05);
   }
 
   .servidor-banner-color {
@@ -397,10 +379,9 @@
   .servidor-banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(16,16,16,0.75) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(16,16,16,0.8) 100%);
   }
 
-  /* BOT BADGE en banner */
   .bot-badge {
     position: absolute;
     top: 10px; right: 12px;
@@ -426,15 +407,10 @@
     border: 1px solid rgba(255,255,255,0.1);
   }
 
-  .bot-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-  }
-
+  .bot-dot { width: 6px; height: 6px; border-radius: 50%; }
   .bot-activo .bot-dot { background: var(--verde); box-shadow: 0 0 5px var(--verde); }
   .bot-inactivo .bot-dot { background: var(--gris); }
 
-  /* BODY CARD */
   .servidor-body {
     padding: 0 16px 16px;
     position: relative;
@@ -444,11 +420,10 @@
     margin-top: -24px;
     margin-bottom: 10px;
     display: inline-block;
-    position: relative;
   }
 
   .servidor-icon {
-    width: 50px; height: 50px;
+    width: 52px; height: 52px;
     border-radius: 14px;
     border: 3px solid var(--negro-card);
     overflow: hidden;
@@ -459,11 +434,7 @@
     background: var(--negro-borde);
   }
 
-  .servidor-icon img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  .servidor-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .servidor-nombre {
     font-family: 'Rajdhani', sans-serif;
@@ -492,30 +463,12 @@
     border-radius: 100px;
   }
 
-  .rol-dueno {
-    background: rgba(204,0,0,0.15);
-    color: var(--rojo-neon);
-    border: 1px solid rgba(204,0,0,0.3);
-  }
+  .rol-dueno { background: rgba(204,0,0,0.15); color: var(--rojo-neon); border: 1px solid rgba(204,0,0,0.3); }
+  .rol-admin { background: rgba(255,140,0,0.12); color: #FF8C00; border: 1px solid rgba(255,140,0,0.25); }
 
-  .rol-admin {
-    background: rgba(255,140,0,0.12);
-    color: #FF8C00;
-    border: 1px solid rgba(255,140,0,0.25);
-  }
+  .servidor-meta { font-size: 12px; color: var(--gris); margin-bottom: 14px; display: flex; gap: 12px; }
 
-  .servidor-meta {
-    font-size: 12px;
-    color: var(--gris);
-    margin-bottom: 14px;
-    display: flex;
-    gap: 12px;
-  }
-
-  .servidor-btns {
-    display: flex;
-    gap: 8px;
-  }
+  .servidor-btns { display: flex; gap: 8px; }
 
   .btn-ir {
     flex: 1;
@@ -550,7 +503,6 @@
 
   .btn-anadir:hover { border-color: rgba(204,0,0,0.4); color: var(--blanco); }
 
-  /* EMPTY */
   .empty-state {
     grid-column: 1/-1;
     text-align: center;
@@ -562,7 +514,6 @@
   .empty-txt { font-size: 16px; margin-bottom: 8px; color: var(--gris-claro); }
   .empty-sub { font-size: 13px; }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 24px; right: 24px;
@@ -577,9 +528,6 @@
     transform: translateY(100px);
     opacity: 0;
     transition: transform 0.3s, opacity 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 
   .toast.visible { transform: translateY(0); opacity: 1; }
@@ -595,14 +543,13 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
     <div class="nav-logo-icon">🔥</div>
     <span class="nav-logo-txt">Astaroth<span>_VT</span></span>
   </a>
   <div class="nav-right" id="nav-right-login">
-    <button class="btn-discord-login" style="width:auto;padding:8px 20px;font-size:13px;" onclick="hacerLogin()">
+    <button class="btn-discord-login" style="width:auto;padding:8px 20px;font-size:13px;" onclick="iniciarOAuth()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.082.118 18.104.136 18.117a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
       </svg>
@@ -625,9 +572,9 @@
     <div class="login-logo">🔥</div>
     <div class="login-titulo">Astaroth<span>_VT</span></div>
     <div class="login-desc">
-      Inicia sesión con Discord para ver los servidores donde puedes gestionar el bot.
+      Inicia sesión con Discord para ver todos los servidores donde puedes gestionar el bot.
     </div>
-    <button class="btn-discord-login" onclick="hacerLogin()">
+    <button class="btn-discord-login" onclick="iniciarOAuth()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.082.118 18.104.136 18.117a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
       </svg>
@@ -655,12 +602,10 @@
     </div>
     <div class="page-stats" id="page-stats"></div>
   </div>
-
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input type="text" class="search-input" placeholder="Buscar servidores..." id="search-input" oninput="filtrarServidores()">
   </div>
-
   <div class="filtros">
     <button class="filtro-btn activo" onclick="setFiltro('todos', this)">Todos</button>
     <button class="filtro-btn" onclick="setFiltro('bot-activo', this)">✅ Bot activo</button>
@@ -668,147 +613,89 @@
     <button class="filtro-btn" onclick="setFiltro('dueno', this)">👑 Dueño/a</button>
     <button class="filtro-btn" onclick="setFiltro('admin', this)">⚙️ Admin</button>
   </div>
-
   <div class="servidores-grid" id="servidores-grid"></div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// =====================
-// TUS SERVIDORES REALES
-// Aquí van los IDs reales de Discord.
-// La foto sale automática desde Discord CDN.
-// icon: null = sin foto (usa emoji)
-// =====================
-const servidores = [
-  {
-    id: "1",
-    discordId: "1516297270046232688",
-    nombre: "Astaroth_VT — Oficial",
-    icon: null,
-    emoji: "🔥",
-    color: "#CC0000",
-    miembros: 4,
-    rol: "dueno",
-    botActivo: true
-  },
-  {
-    id: "2",
-    discordId: null,
-    nombre: "Mi Servidor Gaming",
-    icon: null,
-    emoji: "🎮",
-    color: "#7B2FBE",
-    miembros: 12,
-    rol: "dueno",
-    botActivo: true
-  },
-  {
-    id: "3",
-    discordId: null,
-    nombre: "Comunidad Pruebas",
-    icon: null,
-    emoji: "⚗️",
-    color: "#005999",
-    miembros: 7,
-    rol: "dueno",
-    botActivo: true
-  },
-  {
-    id: "4",
-    discordId: null,
-    nombre: "ZENSHINRI",
-    icon: null,
-    emoji: "⛩️",
-    color: "#3A1A1A",
-    miembros: 85,
-    rol: "admin",
-    botActivo: false
-  },
-  {
-    id: "5",
-    discordId: null,
-    nombre: "HATSU CHAN Community",
-    icon: null,
-    emoji: "🌸",
-    color: "#8B004B",
-    miembros: 230,
-    rol: "admin",
-    botActivo: false
-  },
-  {
-    id: "6",
-    discordId: null,
-    nombre: "FRANCOGC | THE HUB",
-    icon: null,
-    emoji: "🏆",
-    color: "#CC4400",
-    miembros: 512,
-    rol: "admin",
-    botActivo: false
-  },
-  {
-    id: "7",
-    discordId: null,
-    nombre: "MYSTIC MOON NETWORK",
-    icon: null,
-    emoji: "🌙",
-    color: "#1A0044",
-    miembros: 340,
-    rol: "dueno",
-    botActivo: false
-  },
-  {
-    id: "8",
-    discordId: null,
-    nombre: "Chilltopia",
-    icon: null,
-    emoji: "🍃",
-    color: "#004422",
-    miembros: 190,
-    rol: "admin",
-    botActivo: false
-  }
-];
+const CLIENT_ID = '1516297270046232688';
+const RAILWAY_URL = 'https://astarothbot-production.up.railway.app';
+const REDIRECT_URI = encodeURIComponent(RAILWAY_URL + '/callback');
 
+let servidores = [];
 let filtroActual = 'todos';
 let busqueda = '';
+let botGuilds = [];
 
-// Genera URL de icono de Discord
-function getIconUrl(discordId, iconHash) {
-  if (!discordId || !iconHash) return null;
-  return `https://cdn.discordapp.com/icons/${discordId}/${iconHash}.png?size=256`;
+// ── Al cargar la página, revisar si venimos de OAuth ──
+window.addEventListener('DOMContentLoaded', () => {
+  const userData = sessionStorage.getItem('discord_user');
+  if (userData) {
+    try {
+      const user = JSON.parse(decodeURIComponent(userData));
+      mostrarServidores(user);
+    } catch(e) {
+      sessionStorage.removeItem('discord_user');
+    }
+  }
+});
+
+function iniciarOAuth() {
+  const scope = encodeURIComponent('identify guilds');
+  const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${scope}`;
+  window.location.href = url;
 }
 
-// Genera icono con iniciales si no hay foto
-function getIniciales(nombre) {
-  return nombre.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-}
-
-function hacerLogin() {
+async function mostrarServidores(user) {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('nav-right-login').style.display = 'none';
 
-  // Simula carga
   const loading = document.getElementById('loading-page');
   loading.style.display = 'flex';
+
+  // Obtener qué servidores tiene el bot
+  try {
+    const r = await fetch(RAILWAY_URL + '/bot-guilds');
+    botGuilds = await r.json();
+  } catch(e) {
+    botGuilds = [];
+  }
+
+  // Construir lista de servidores
+  servidores = user.guilds.map(g => ({
+    id: g.id,
+    nombre: g.nombre,
+    icon_url: g.icon_url,
+    rol: g.rol,
+    botActivo: botGuilds.includes(g.id)
+  }));
+
+  // Actualizar nav con avatar del usuario
+  const navAvatar = document.getElementById('nav-avatar');
+  if (user.avatar) {
+    navAvatar.innerHTML = `<img src="${user.avatar}" alt="${user.username}">`;
+  } else {
+    navAvatar.textContent = user.username[0].toUpperCase();
+  }
+  document.getElementById('nav-username').textContent = user.username;
+  document.getElementById('nav-right-user').style.display = 'flex';
 
   setTimeout(() => {
     loading.style.display = 'none';
     document.getElementById('servidores-page').style.display = 'block';
-    document.getElementById('nav-right-user').style.display = 'flex';
     actualizarStats();
     renderServidores();
-  }, 1200);
+  }, 800);
 }
 
 function cerrarSesion() {
+  sessionStorage.removeItem('discord_user');
   document.getElementById('login-page').style.display = 'flex';
   document.getElementById('servidores-page').style.display = 'none';
   document.getElementById('nav-right-login').style.display = 'flex';
   document.getElementById('nav-right-user').style.display = 'none';
+  servidores = [];
   filtroActual = 'todos';
   busqueda = '';
   document.getElementById('search-input').value = '';
@@ -830,8 +717,7 @@ function actualizarStats() {
     <div class="pstat">
       <div class="pstat-num" style="color:#FF8C00">${sinBot}</div>
       <div class="pstat-label">Sin bot</div>
-    </div>
-  `;
+    </div>`;
 }
 
 function setFiltro(f, btn) {
@@ -869,18 +755,15 @@ function renderServidores() {
   }
 
   grid.innerHTML = lista.map(s => {
-    const iconUrl = getIconUrl(s.discordId, s.icon);
-    const iniciales = getIniciales(s.nombre);
-
-    const iconHTML = iconUrl
-      ? `<img src="${iconUrl}" alt="${s.nombre}" onerror="this.parentElement.innerHTML='${s.emoji}'">`
-      : s.emoji;
-
-    const bannerHTML = iconUrl
-      ? `<img class="servidor-banner-bg" src="${iconUrl}" alt="" onerror="this.style.display='none'">`
-      : `<div class="servidor-banner-color" style="background:linear-gradient(135deg,${s.color}88,${s.color}22);">
-           <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;opacity:0.5;">${s.emoji}</div>
+    const bannerHTML = s.icon_url
+      ? `<img class="servidor-banner-bg" src="${s.icon_url}" alt="">`
+      : `<div class="servidor-banner-color" style="background:linear-gradient(135deg,rgba(204,0,0,0.4),rgba(204,0,0,0.1));">
+           <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;opacity:0.4;">🔥</div>
          </div>`;
+
+    const iconHTML = s.icon_url
+      ? `<img src="${s.icon_url}" alt="${s.nombre}">`
+      : `<span>${s.nombre.substring(0,2).toUpperCase()}</span>`;
 
     return `
     <div class="servidor-card">
@@ -894,7 +777,7 @@ function renderServidores() {
       </div>
       <div class="servidor-body">
         <div class="servidor-icon-wrap">
-          <div class="servidor-icon" style="${!iconUrl ? `background:linear-gradient(135deg,${s.color},${s.color}88)` : ''}">
+          <div class="servidor-icon" style="${!s.icon_url ? 'background:linear-gradient(135deg,#CC0000,#FF4444)' : ''}">
             ${iconHTML}
           </div>
         </div>
@@ -904,11 +787,8 @@ function renderServidores() {
             ${s.rol === 'dueno' ? '👑 Dueño/a' : '⚙️ Admin'}
           </span>
         </div>
-        <div class="servidor-meta">
-          <span>👥 ${s.miembros.toLocaleString()} miembros</span>
-        </div>
         <div class="servidor-btns">
-          <button class="btn-ir" onclick="irDashboard('${s.id}', '${s.nombre}')">⚙️ Gestionar</button>
+          <button class="btn-ir" onclick="irDashboard('${s.id}', '${s.nombre.replace(/'/g, "\\'")}')">⚙️ Gestionar</button>
           ${!s.botActivo ? `<button class="btn-anadir" onclick="anadirBot('${s.id}')">➕ Añadir bot</button>` : ''}
         </div>
       </div>
@@ -917,13 +797,15 @@ function renderServidores() {
 }
 
 function irDashboard(id, nombre) {
-  mostrarToast('🔄 Abriendo panel de ' + nombre + '...', false);
+  sessionStorage.setItem('servidor_actual', JSON.stringify({id, nombre}));
+  mostrarToast('🔄 Abriendo panel de ' + nombre + '...');
   setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
 }
 
 function anadirBot(id) {
-  window.open('https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands', '_blank');
-  mostrarToast('🚀 Abriendo Discord para añadir el bot', false);
+  const url = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=8&scope=bot%20applications.commands&guild_id=${id}`;
+  window.open(url, '_blank');
+  mostrarToast('🚀 Abriendo Discord para añadir el bot');
 }
 
 function mostrarToast(msg, esError = false) {
