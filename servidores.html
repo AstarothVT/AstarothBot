@@ -105,12 +105,14 @@
   .nav-avatar {
     width: 28px; height: 28px;
     border-radius: 50%;
+    overflow: hidden;
     background: var(--degradado);
     display: flex; align-items: center; justify-content: center;
     font-size: 12px;
     font-weight: 700;
   }
 
+  .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .nav-username { font-size: 13px; font-weight: 500; }
 
   .btn-nav-logout {
@@ -215,6 +217,33 @@
     line-height: 1.7;
   }
 
+  /* LOADING */
+  .loading-page {
+    display: none;
+    min-height: calc(100vh - 60px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .loading-spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--negro-borde);
+    border-top-color: var(--rojo-neon);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-txt {
+    color: var(--gris-claro);
+    font-size: 14px;
+  }
+
   /* SERVIDORES PAGE */
   .servidores-page {
     display: none;
@@ -225,6 +254,15 @@
     margin: 0 auto;
   }
 
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
   .page-titulo {
     font-family: 'Rajdhani', sans-serif;
     font-size: 34px;
@@ -232,17 +270,35 @@
     margin-bottom: 6px;
   }
 
-  .page-sub {
-    color: var(--gris-claro);
-    font-size: 14px;
-    margin-bottom: 28px;
+  .page-sub { color: var(--gris-claro); font-size: 14px; }
+
+  .page-stats {
+    display: flex;
+    gap: 20px;
   }
+
+  .pstat {
+    text-align: center;
+    padding: 12px 20px;
+    background: var(--negro-card);
+    border: 1px solid var(--negro-borde);
+    border-radius: 12px;
+  }
+
+  .pstat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--rojo-neon);
+  }
+
+  .pstat-label { font-size: 11px; color: var(--gris); }
 
   /* BUSCADOR */
   .search-wrap {
     position: relative;
-    max-width: 600px;
-    margin-bottom: 36px;
+    max-width: 500px;
+    margin-bottom: 20px;
   }
 
   .search-icon {
@@ -274,7 +330,7 @@
   .filtros {
     display: flex;
     gap: 8px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     flex-wrap: wrap;
   }
 
@@ -297,86 +353,121 @@
     background: rgba(204,0,0,0.1);
   }
 
-  /* GRILLA DE SERVIDORES */
+  /* GRILLA */
   .servidores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
 
+  /* CARD */
   .servidor-card {
     background: var(--negro-card);
     border: 1px solid var(--negro-borde);
     border-radius: 16px;
     overflow: hidden;
     transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-    cursor: pointer;
   }
 
   .servidor-card:hover {
-    border-color: rgba(204,0,0,0.4);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border-color: rgba(204,0,0,0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
   }
 
-  /* BANNER DEL SERVIDOR */
+  /* BANNER */
   .servidor-banner {
-    height: 90px;
+    height: 88px;
     position: relative;
     overflow: hidden;
   }
 
-  .servidor-banner-img {
+  .servidor-banner-bg {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
-  .servidor-banner-fallback {
+  .servidor-banner-color {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
   }
 
   .servidor-banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(16,16,16,0.8) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(16,16,16,0.75) 100%);
   }
 
-  /* ICONO DEL SERVIDOR */
+  /* BOT BADGE en banner */
+  .bot-badge {
+    position: absolute;
+    top: 10px; right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+  }
+
+  .bot-activo {
+    background: rgba(0,204,102,0.15);
+    color: var(--verde);
+    border: 1px solid rgba(0,204,102,0.3);
+  }
+
+  .bot-inactivo {
+    background: rgba(0,0,0,0.4);
+    color: var(--gris-claro);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .bot-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  .bot-activo .bot-dot { background: var(--verde); box-shadow: 0 0 5px var(--verde); }
+  .bot-inactivo .bot-dot { background: var(--gris); }
+
+  /* BODY CARD */
   .servidor-body {
-    padding: 0 18px 18px;
+    padding: 0 16px 16px;
     position: relative;
   }
 
   .servidor-icon-wrap {
-    margin-top: -26px;
-    margin-bottom: 12px;
-    position: relative;
+    margin-top: -24px;
+    margin-bottom: 10px;
     display: inline-block;
+    position: relative;
   }
 
   .servidor-icon {
-    width: 52px; height: 52px;
-    border-radius: 50%;
+    width: 50px; height: 50px;
+    border-radius: 14px;
     border: 3px solid var(--negro-card);
-    background: var(--negro-borde);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
     display: flex; align-items: center; justify-content: center;
     font-size: 22px;
     font-weight: 700;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    background: var(--negro-borde);
   }
 
-  .servidor-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .servidor-icon img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   .servidor-nombre {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     margin-bottom: 4px;
     white-space: nowrap;
@@ -384,15 +475,21 @@
     text-overflow: ellipsis;
   }
 
+  .servidor-rol-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
   .servidor-rol {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     font-size: 11px;
     font-weight: 600;
-    padding: 2px 10px;
+    padding: 2px 9px;
     border-radius: 100px;
-    margin-bottom: 14px;
   }
 
   .rol-dueno {
@@ -404,19 +501,16 @@
   .rol-admin {
     background: rgba(255,140,0,0.12);
     color: #FF8C00;
-    border: 1px solid rgba(255,140,0,0.3);
+    border: 1px solid rgba(255,140,0,0.25);
   }
 
   .servidor-meta {
-    display: flex;
-    align-items: center;
-    gap: 14px;
     font-size: 12px;
     color: var(--gris);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
   }
-
-  .servidor-meta span { display: flex; align-items: center; gap: 4px; }
 
   .servidor-btns {
     display: flex;
@@ -434,11 +528,11 @@
     font-weight: 600;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
     box-shadow: 0 2px 12px rgba(204,0,0,0.25);
   }
 
-  .btn-ir:hover { opacity: 0.85; }
+  .btn-ir:hover { opacity: 0.85; transform: translateY(-1px); }
 
   .btn-anadir {
     flex: 1;
@@ -456,36 +550,15 @@
 
   .btn-anadir:hover { border-color: rgba(204,0,0,0.4); color: var(--blanco); }
 
-  /* ESTADO BOT */
-  .bot-badge {
-    position: absolute;
-    top: 12px; right: 18px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .bot-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-  }
-
-  .bot-activo { color: var(--verde); }
-  .bot-activo .bot-dot { background: var(--verde); box-shadow: 0 0 5px var(--verde); }
-  .bot-inactivo { color: var(--gris); }
-  .bot-inactivo .bot-dot { background: var(--gris); }
-
-  /* EMPTY STATE */
+  /* EMPTY */
   .empty-state {
     grid-column: 1/-1;
     text-align: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     color: var(--gris);
   }
 
-  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-icon { font-size: 52px; margin-bottom: 16px; }
   .empty-txt { font-size: 16px; margin-bottom: 8px; color: var(--gris-claro); }
   .empty-sub { font-size: 13px; }
 
@@ -493,7 +566,7 @@
   .toast {
     position: fixed;
     bottom: 24px; right: 24px;
-    background: #1A1A1A;
+    background: #181818;
     border: 1px solid rgba(0,204,102,0.3);
     color: var(--verde);
     padding: 12px 20px;
@@ -504,14 +577,19 @@
     transform: translateY(100px);
     opacity: 0;
     transition: transform 0.3s, opacity 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .toast.visible { transform: translateY(0); opacity: 1; }
+  .toast.error { border-color: rgba(204,0,0,0.3); color: var(--rojo-neon); }
 
   @media (max-width: 640px) {
-    .servidores-page { padding: 28px 20px 60px; }
-    nav { padding: 0 20px; }
+    .servidores-page { padding: 24px 16px 60px; }
+    nav { padding: 0 16px; }
     .servidores-grid { grid-template-columns: 1fr; }
+    .page-stats { display: none; }
   }
 </style>
 </head>
@@ -562,10 +640,21 @@
   </div>
 </div>
 
+<!-- LOADING -->
+<div class="loading-page" id="loading-page">
+  <div class="loading-spinner"></div>
+  <div class="loading-txt">Cargando tus servidores...</div>
+</div>
+
 <!-- SERVIDORES PAGE -->
 <div class="servidores-page" id="servidores-page">
-  <div class="page-titulo">Selecciona un servidor</div>
-  <div class="page-sub">Servidores donde tienes permisos de administrador</div>
+  <div class="page-header">
+    <div>
+      <div class="page-titulo">Selecciona un servidor</div>
+      <div class="page-sub">Servidores donde tienes permisos de administrador</div>
+    </div>
+    <div class="page-stats" id="page-stats"></div>
+  </div>
 
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
@@ -580,23 +669,25 @@
     <button class="filtro-btn" onclick="setFiltro('admin', this)">⚙️ Admin</button>
   </div>
 
-  <div class="servidores-grid" id="servidores-grid">
-    <!-- Generado por JS -->
-  </div>
+  <div class="servidores-grid" id="servidores-grid"></div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast">✅ Acción realizada</div>
+<div class="toast" id="toast"></div>
 
 <script>
 // =====================
-//   DATOS DE EJEMPLO
-//   (simula los servidores reales donde el usuario tiene poder)
+// TUS SERVIDORES REALES
+// Aquí van los IDs reales de Discord.
+// La foto sale automática desde Discord CDN.
+// icon: null = sin foto (usa emoji)
 // =====================
 const servidores = [
   {
-    id: 1,
+    id: "1",
+    discordId: "1516297270046232688",
     nombre: "Astaroth_VT — Oficial",
+    icon: null,
     emoji: "🔥",
     color: "#CC0000",
     miembros: 4,
@@ -604,8 +695,10 @@ const servidores = [
     botActivo: true
   },
   {
-    id: 2,
+    id: "2",
+    discordId: null,
     nombre: "Mi Servidor Gaming",
+    icon: null,
     emoji: "🎮",
     color: "#7B2FBE",
     miembros: 12,
@@ -613,8 +706,10 @@ const servidores = [
     botActivo: true
   },
   {
-    id: 3,
+    id: "3",
+    discordId: null,
     nombre: "Comunidad Pruebas",
+    icon: null,
     emoji: "⚗️",
     color: "#005999",
     miembros: 7,
@@ -622,17 +717,21 @@ const servidores = [
     botActivo: true
   },
   {
-    id: 4,
+    id: "4",
+    discordId: null,
     nombre: "ZENSHINRI",
+    icon: null,
     emoji: "⛩️",
-    color: "#2D2D2D",
+    color: "#3A1A1A",
     miembros: 85,
     rol: "admin",
     botActivo: false
   },
   {
-    id: 5,
+    id: "5",
+    discordId: null,
     nombre: "HATSU CHAN Community",
+    icon: null,
     emoji: "🌸",
     color: "#8B004B",
     miembros: 230,
@@ -640,8 +739,10 @@ const servidores = [
     botActivo: false
   },
   {
-    id: 6,
+    id: "6",
+    discordId: null,
     nombre: "FRANCOGC | THE HUB",
+    icon: null,
     emoji: "🏆",
     color: "#CC4400",
     miembros: 512,
@@ -649,8 +750,10 @@ const servidores = [
     botActivo: false
   },
   {
-    id: 7,
+    id: "7",
+    discordId: null,
     nombre: "MYSTIC MOON NETWORK",
+    icon: null,
     emoji: "🌙",
     color: "#1A0044",
     miembros: 340,
@@ -658,8 +761,10 @@ const servidores = [
     botActivo: false
   },
   {
-    id: 8,
+    id: "8",
+    discordId: null,
     nombre: "Chilltopia",
+    icon: null,
     emoji: "🍃",
     color: "#004422",
     miembros: 190,
@@ -671,12 +776,32 @@ const servidores = [
 let filtroActual = 'todos';
 let busqueda = '';
 
+// Genera URL de icono de Discord
+function getIconUrl(discordId, iconHash) {
+  if (!discordId || !iconHash) return null;
+  return `https://cdn.discordapp.com/icons/${discordId}/${iconHash}.png?size=256`;
+}
+
+// Genera icono con iniciales si no hay foto
+function getIniciales(nombre) {
+  return nombre.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+}
+
 function hacerLogin() {
   document.getElementById('login-page').style.display = 'none';
-  document.getElementById('servidores-page').style.display = 'block';
   document.getElementById('nav-right-login').style.display = 'none';
-  document.getElementById('nav-right-user').style.display = 'flex';
-  renderServidores();
+
+  // Simula carga
+  const loading = document.getElementById('loading-page');
+  loading.style.display = 'flex';
+
+  setTimeout(() => {
+    loading.style.display = 'none';
+    document.getElementById('servidores-page').style.display = 'block';
+    document.getElementById('nav-right-user').style.display = 'flex';
+    actualizarStats();
+    renderServidores();
+  }, 1200);
 }
 
 function cerrarSesion() {
@@ -684,6 +809,29 @@ function cerrarSesion() {
   document.getElementById('servidores-page').style.display = 'none';
   document.getElementById('nav-right-login').style.display = 'flex';
   document.getElementById('nav-right-user').style.display = 'none';
+  filtroActual = 'todos';
+  busqueda = '';
+  document.getElementById('search-input').value = '';
+}
+
+function actualizarStats() {
+  const total = servidores.length;
+  const activos = servidores.filter(s => s.botActivo).length;
+  const sinBot = total - activos;
+  document.getElementById('page-stats').innerHTML = `
+    <div class="pstat">
+      <div class="pstat-num">${total}</div>
+      <div class="pstat-label">Servidores</div>
+    </div>
+    <div class="pstat">
+      <div class="pstat-num" style="color:var(--verde)">${activos}</div>
+      <div class="pstat-label">Bot activo</div>
+    </div>
+    <div class="pstat">
+      <div class="pstat-num" style="color:#FF8C00">${sinBot}</div>
+      <div class="pstat-label">Sin bot</div>
+    </div>
+  `;
 }
 
 function setFiltro(f, btn) {
@@ -715,61 +863,73 @@ function renderServidores() {
       <div class="empty-state">
         <div class="empty-icon">🔍</div>
         <div class="empty-txt">No se encontraron servidores</div>
-        <div class="empty-sub">Prueba con otro filtro o busca por nombre</div>
+        <div class="empty-sub">Prueba con otro filtro o escribe otro nombre</div>
       </div>`;
     return;
   }
 
-  grid.innerHTML = lista.map(s => `
-    <div class="servidor-card" data-id="${s.id}">
+  grid.innerHTML = lista.map(s => {
+    const iconUrl = getIconUrl(s.discordId, s.icon);
+    const iniciales = getIniciales(s.nombre);
+
+    const iconHTML = iconUrl
+      ? `<img src="${iconUrl}" alt="${s.nombre}" onerror="this.parentElement.innerHTML='${s.emoji}'">`
+      : s.emoji;
+
+    const bannerHTML = iconUrl
+      ? `<img class="servidor-banner-bg" src="${iconUrl}" alt="" onerror="this.style.display='none'">`
+      : `<div class="servidor-banner-color" style="background:linear-gradient(135deg,${s.color}88,${s.color}22);">
+           <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;opacity:0.5;">${s.emoji}</div>
+         </div>`;
+
+    return `
+    <div class="servidor-card">
       <div class="servidor-banner">
-        <div class="servidor-banner-fallback" style="background: linear-gradient(135deg, ${s.color}55, ${s.color}22);">
-          <span style="font-size:36px; opacity:0.6;">${s.emoji}</span>
-        </div>
+        ${bannerHTML}
         <div class="servidor-banner-overlay"></div>
-      </div>
-      <div class="servidor-body">
-        <div class="servidor-icon-wrap">
-          <div class="servidor-icon" style="background: linear-gradient(135deg, ${s.color}, ${s.color}88);">
-            ${s.emoji}
-          </div>
-        </div>
-        <div class="${s.botActivo ? 'bot-badge bot-activo' : 'bot-badge bot-inactivo'}">
+        <div class="bot-badge ${s.botActivo ? 'bot-activo' : 'bot-inactivo'}">
           <span class="bot-dot"></span>
           ${s.botActivo ? 'Bot activo' : 'Sin bot'}
         </div>
+      </div>
+      <div class="servidor-body">
+        <div class="servidor-icon-wrap">
+          <div class="servidor-icon" style="${!iconUrl ? `background:linear-gradient(135deg,${s.color},${s.color}88)` : ''}">
+            ${iconHTML}
+          </div>
+        </div>
         <div class="servidor-nombre">${s.nombre}</div>
-        <span class="servidor-rol ${s.rol === 'dueno' ? 'rol-dueno' : 'rol-admin'}">
-          ${s.rol === 'dueno' ? '👑 Dueño/a' : '⚙️ Admin'}
-        </span>
+        <div class="servidor-rol-row">
+          <span class="servidor-rol ${s.rol === 'dueno' ? 'rol-dueno' : 'rol-admin'}">
+            ${s.rol === 'dueno' ? '👑 Dueño/a' : '⚙️ Admin'}
+          </span>
+        </div>
         <div class="servidor-meta">
-          <span>👥 ${s.miembros} miembros</span>
+          <span>👥 ${s.miembros.toLocaleString()} miembros</span>
         </div>
         <div class="servidor-btns">
-          ${s.botActivo
-            ? `<button class="btn-ir" onclick="irDashboard(${s.id})">⚙️ Gestionar</button>`
-            : `<button class="btn-ir" onclick="irDashboard(${s.id})">⚙️ Gestionar</button>
-               <button class="btn-anadir" onclick="anadirBot(${s.id})">➕ Añadir bot</button>`
-          }
+          <button class="btn-ir" onclick="irDashboard('${s.id}', '${s.nombre}')">⚙️ Gestionar</button>
+          ${!s.botActivo ? `<button class="btn-anadir" onclick="anadirBot('${s.id}')">➕ Añadir bot</button>` : ''}
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
-function irDashboard(id) {
-  mostrarToast('🔄 Abriendo panel del servidor...');
-  setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+function irDashboard(id, nombre) {
+  mostrarToast('🔄 Abriendo panel de ' + nombre + '...', false);
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
 }
 
 function anadirBot(id) {
   window.open('https://discord.com/oauth2/authorize?client_id=1516297270046232688&permissions=8&scope=bot%20applications.commands', '_blank');
-  mostrarToast('🚀 Abriendo Discord para añadir el bot');
+  mostrarToast('🚀 Abriendo Discord para añadir el bot', false);
 }
 
-function mostrarToast(msg) {
+function mostrarToast(msg, esError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.className = 'toast' + (esError ? ' error' : '');
   t.classList.add('visible');
   setTimeout(() => t.classList.remove('visible'), 3000);
 }
