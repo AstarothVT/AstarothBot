@@ -259,7 +259,6 @@
   }
 
   .page-sub { color: var(--gris-claro); font-size: 14px; }
-
   .page-stats { display: flex; gap: 20px; }
 
   .pstat {
@@ -467,7 +466,6 @@
   .rol-admin { background: rgba(255,140,0,0.12); color: #FF8C00; border: 1px solid rgba(255,140,0,0.25); }
 
   .servidor-meta { font-size: 12px; color: var(--gris); margin-bottom: 14px; display: flex; gap: 12px; }
-
   .servidor-btns { display: flex; gap: 8px; }
 
   .btn-ir {
@@ -628,15 +626,33 @@ let filtroActual = 'todos';
 let busqueda = '';
 let botGuilds = [];
 
-// ── Al cargar la página, revisar si venimos de OAuth ──
+// ── CLAVE: leer datos de la URL cuando Discord redirige de vuelta ──
 window.addEventListener('DOMContentLoaded', () => {
-  const userData = sessionStorage.getItem('discord_user');
-  if (userData) {
+  const params = new URLSearchParams(window.location.search);
+  const data = params.get('data');
+
+  if (data) {
+    // Venimos del callback de Railway con datos en la URL
     try {
-      const user = JSON.parse(decodeURIComponent(userData));
+      const user = JSON.parse(decodeURIComponent(data));
+      // Guardar en sessionStorage para no perderlo al navegar
+      sessionStorage.setItem('discord_user', JSON.stringify(user));
+      // Limpiar la URL sin recargar
+      window.history.replaceState({}, '', window.location.pathname);
       mostrarServidores(user);
     } catch(e) {
-      sessionStorage.removeItem('discord_user');
+      console.error('Error parseando datos:', e);
+    }
+  } else {
+    // Revisar si ya hay sesión guardada
+    const guardado = sessionStorage.getItem('discord_user');
+    if (guardado) {
+      try {
+        const user = JSON.parse(guardado);
+        mostrarServidores(user);
+      } catch(e) {
+        sessionStorage.removeItem('discord_user');
+      }
     }
   }
 });
@@ -653,8 +669,9 @@ async function mostrarServidores(user) {
 
   const loading = document.getElementById('loading-page');
   loading.style.display = 'flex';
+  document.getElementById('loading-txt') && (document.getElementById('loading-txt').textContent = 'Cargando tus servidores...');
 
-  // Obtener qué servidores tiene el bot
+  // Obtener qué servidores tiene el bot actualmente
   try {
     const r = await fetch(RAILWAY_URL + '/bot-guilds');
     botGuilds = await r.json();
@@ -662,7 +679,7 @@ async function mostrarServidores(user) {
     botGuilds = [];
   }
 
-  // Construir lista de servidores
+  // Construir lista con info de bot activo
   servidores = user.guilds.map(g => ({
     id: g.id,
     nombre: g.nombre,
@@ -671,14 +688,14 @@ async function mostrarServidores(user) {
     botActivo: botGuilds.includes(g.id)
   }));
 
-  // Actualizar nav con avatar del usuario
+  // Mostrar avatar del usuario en el nav
   const navAvatar = document.getElementById('nav-avatar');
   if (user.avatar) {
     navAvatar.innerHTML = `<img src="${user.avatar}" alt="${user.username}">`;
   } else {
-    navAvatar.textContent = user.username[0].toUpperCase();
+    navAvatar.textContent = user.username ? user.username[0].toUpperCase() : 'A';
   }
-  document.getElementById('nav-username').textContent = user.username;
+  document.getElementById('nav-username').textContent = user.username || 'Usuario';
   document.getElementById('nav-right-user').style.display = 'flex';
 
   setTimeout(() => {
@@ -756,14 +773,14 @@ function renderServidores() {
 
   grid.innerHTML = lista.map(s => {
     const bannerHTML = s.icon_url
-      ? `<img class="servidor-banner-bg" src="${s.icon_url}" alt="">`
-      : `<div class="servidor-banner-color" style="background:linear-gradient(135deg,rgba(204,0,0,0.4),rgba(204,0,0,0.1));">
-           <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;opacity:0.4;">🔥</div>
+      ? `<img class="servidor-banner-bg" src="${s.icon_url}" alt="" onerror="this.style.display='none'">`
+      : `<div class="servidor-banner-color" style="background:linear-gradient(135deg,rgba(204,0,0,0.5),rgba(204,0,0,0.15));">
+           <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;opacity:0.3;">🔥</div>
          </div>`;
 
     const iconHTML = s.icon_url
-      ? `<img src="${s.icon_url}" alt="${s.nombre}">`
-      : `<span>${s.nombre.substring(0,2).toUpperCase()}</span>`;
+      ? `<img src="${s.icon_url}" alt="${s.nombre}" onerror="this.outerHTML='<span style=font-size:18px;font-weight:700>${s.nombre.substring(0,2).toUpperCase()}</span>'">`
+      : `<span style="font-size:18px;font-weight:700;color:white">${s.nombre.substring(0,2).toUpperCase()}</span>`;
 
     return `
     <div class="servidor-card">
