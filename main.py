@@ -5,6 +5,7 @@ import os
 import json
 import threading
 import requests
+import urllib.parse
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -20,7 +21,7 @@ RAILWAY_URL = os.getenv("RAILWAY_URL")
 # ════════════════════════════════
 
 app = Flask(__name__)
-CORS(app, origins=["https://astarothvt.github.io"])
+CORS(app, origins=["https://astarothvt.github.io", "*"])
 
 @app.route("/")
 def home():
@@ -32,7 +33,6 @@ def callback():
     if not code:
         return "Error: no se recibió código", 400
 
-    # Intercambiar código por token
     data = {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
@@ -46,18 +46,16 @@ def callback():
     access_token = token_data.get("access_token")
 
     if not access_token:
-        return "Error al obtener token", 400
+        error_desc = token_data.get("error_description", "desconocido")
+        return f"Error al obtener token: {error_desc}", 400
 
-    # Obtener info del usuario
     user_headers = {"Authorization": f"Bearer {access_token}"}
     user_r = requests.get("https://discord.com/api/users/@me", headers=user_headers)
     user = user_r.json()
 
-    # Obtener servidores del usuario
     guilds_r = requests.get("https://discord.com/api/users/@me/guilds", headers=user_headers)
     guilds = guilds_r.json()
 
-    # Filtrar solo donde tiene admin o es dueño
     admin_guilds = []
     for g in guilds:
         permissions = int(g.get("permissions", 0))
@@ -74,33 +72,39 @@ def callback():
                 "rol": "dueno" if is_owner else "admin"
             })
 
-    # Redirigir a la página con los datos
-    import urllib.parse
     user_data = {
         "id": user.get("id"),
         "username": user.get("username"),
         "avatar": f"https://cdn.discordapp.com/avatars/{user['id']}/{user['avatar']}.png" if user.get("avatar") else None,
         "guilds": admin_guilds
     }
+
     encoded = urllib.parse.quote(json.dumps(user_data))
-    return f"""
-    <html>
-    <body>
-    <script>
-        localStorage.setItem('discord_user', '{encoded}');
-        window.location.href = 'https://astarothvt.github.io/AstarothBot/servidores.html';
-    </script>
-    </body>
-    </html>
-    """
+    redirect_url = f"https://astarothvt.github.io/AstarothBot/servidores.html?data={encoded}"
+
+    return f"""<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+    window.location.href = '{redirect_url}';
+</script>
+<noscript>
+    <a href="{redirect_url}">Click aquí para continuar</a>
+</noscript>
+</body>
+</html>"""
 
 @app.route("/bot-guilds")
 def bot_guilds():
-    guild_ids = [str(g.id) for g in bot.guilds]
-    return jsonify(guild_ids)
+    try:
+        guild_ids = [str(g.id) for g in bot.guilds]
+        return jsonify(guild_ids)
+    except:
+        return jsonify([])
 
 def run_flask():
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, threaded=True)
 
 # ════════════════════════════════
 #        BASE DE DATOS JSON
@@ -477,9 +481,7 @@ async def lfg(ctx, *, mensaje="¿Alguien para jugar?"):
 #        INICIO
 # ════════════════════════════════
 
-# Iniciar Flask en hilo separado
 flask_thread = threading.Thread(target=run_flask, daemon=True)
 flask_thread.start()
 
-# Iniciar bot
 bot.run(TOKEN)
