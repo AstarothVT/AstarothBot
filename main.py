@@ -6,6 +6,7 @@ import json
 import threading
 import requests
 import urllib.parse
+import secrets
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -21,7 +22,10 @@ RAILWAY_URL = os.getenv("RAILWAY_URL")
 # ════════════════════════════════
 
 app = Flask(__name__)
-CORS(app, origins=["https://astarothvt.github.io", "*"])
+CORS(app, origins=["*"])
+
+# Almacenamiento temporal de sesiones en memoria
+sesiones = {}
 
 @app.route("/")
 def home():
@@ -63,7 +67,7 @@ def callback():
         is_admin = bool(permissions & 0x8)
         if is_owner or is_admin:
             icon = g.get("icon")
-            icon_url = f"https://cdn.discordapp.com/icons/{g['id']}/{icon}.png?size=256" if icon else None
+            icon_url = f"https://cdn.discordapp.com/icons/{g['id']}/{icon}.png?size=128" if icon else None
             admin_guilds.append({
                 "id": g["id"],
                 "nombre": g["name"],
@@ -75,25 +79,28 @@ def callback():
     user_data = {
         "id": user.get("id"),
         "username": user.get("username"),
-        "avatar": f"https://cdn.discordapp.com/avatars/{user['id']}/{user['avatar']}.png" if user.get("avatar") else None,
+        "avatar": f"https://cdn.discordapp.com/avatars/{user['id']}/{user['avatar']}.png?size=64" if user.get("avatar") else None,
         "guilds": admin_guilds
     }
 
-    encoded = urllib.parse.quote(json.dumps(user_data))
-    redirect_url = f"https://astarothvt.github.io/AstarothBot/servidores.html?data={encoded}"
+    # Generar token corto y guardar sesión en memoria
+    session_token = secrets.token_urlsafe(16)
+    sesiones[session_token] = user_data
 
     return f"""<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
+<html><head><meta charset="UTF-8"></head>
 <body>
 <script>
-    window.location.href = '{redirect_url}';
+    window.location.href = 'https://astarothvt.github.io/AstarothBot/servidores.html?token={session_token}';
 </script>
-<noscript>
-    <a href="{redirect_url}">Click aquí para continuar</a>
-</noscript>
-</body>
-</html>"""
+</body></html>"""
+
+@app.route("/sesion/<token>")
+def get_sesion(token):
+    data = sesiones.get(token)
+    if not data:
+        return jsonify({"error": "sesión no encontrada"}), 404
+    return jsonify(data)
 
 @app.route("/bot-guilds")
 def bot_guilds():
